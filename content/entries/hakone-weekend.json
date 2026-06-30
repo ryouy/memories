@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "sample-hakone-weekend",
+  "slug": "hakone-weekend",
+  "title": "箱根で過ごす週末",
+  "summary": "温泉街の坂道、湖の風、夕方の湯けむり。短い週末でも気分が切り替わる旅でした。",
+  "status": "published",
+  "visitedAt": "2026-02-22",
+  "createdAt": "2026-02-25T21:00:00+09:00",
+  "updatedAt": "2026-02-25T21:00:00+09:00",
+  "tags": ["箱根", "温泉", "冬"],
+  "location": {
+    "name": "箱根湯本",
+    "address": "神奈川県足柄下郡箱根町",
+    "googleMapsUrl": "https://www.google.com/maps/place/Hakone-Yumoto+Station/"
+  },
+  "coverImage": {
+    "src": "/uploads/hakone-weekend/20260222-001.svg",
+    "alt": "山あいの温泉街",
+    "caption": "夕方の温泉街",
+    "width": 2000,
+    "height": 1333
+  },
+  "blocks": [
+    {
+      "id": "block-001",
+      "type": "image",
+      "displayWidth": "full",
+      "image": {
+        "src": "/uploads/hakone-weekend/20260222-001.svg",
+        "alt": "山あいの温泉街",
+        "caption": "宿へ向かう途中",
+        "width": 2000,
+        "height": 1333
+      }
+    },
+    {
+      "id": "block-002",
+      "type": "text",
+      "content": "昼すぎに到着して、荷物を置いてから近くを散歩しました。観光を詰め込みすぎず、立ち寄った店で少し長めに休むくらいがちょうどよい日でした。"
+    },
+    {
+      "id": "block-003",
+      "type": "map",
+      "title": "箱根湯本駅周辺",
+      "googleMapsUrl": "https://www.google.com/maps/place/Hakone-Yumoto+Station/"
+    }
+  ]
+}

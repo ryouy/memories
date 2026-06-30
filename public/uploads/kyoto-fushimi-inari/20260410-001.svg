@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1333" viewBox="0 0 2000 1333" role="img" aria-label="朱色の鳥居が並ぶ参道">
+  <rect width="2000" height="1333" fill="#ece7dc"/>
+  <rect y="880" width="2000" height="453" fill="#b9b29f"/>
+  <path d="M0 380h2000v120H0z" fill="#a83d2b"/>
+  <path d="M170 250h120v850H170zM520 220h120v880H520zM880 190h120v910H880zM1240 220h120v880h-120zM1590 250h120v850h-120z" fill="#bf4b32"/>
+  <path d="M230 500h1540v90H230zM300 710h1400v70H300z" fill="#7c2e24"/>
+  <path d="M950 590 660 1333h680L1050 590z" fill="#d8d1c4"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1333" viewBox="0 0 2000 1333" role="img" aria-label="山あいの温泉街">
+  <rect width="2000" height="1333" fill="#e8ece8"/>
+  <path d="M0 620 420 210l310 370 260-260 370 390 270-230 370 330v523H0z" fill="#6f7d66"/>
+  <path d="M0 810c260-80 520-100 780-35 250 62 520 60 820-10 160-38 290-28 400 10v558H0z" fill="#9ea88d"/>
+  <rect x="640" y="760" width="720" height="330" rx="8" fill="#8f5f4c"/>
+  <path d="M600 760h800l-110-130H710z" fill="#5f463b"/>
+  <path d="M780 840h120v170H780zM980 840h120v170H980zM1180 840h120v170h-120z" fill="#eadfc9"/>
+  <path d="M1380 660c80-120-80-120 0-240M1480 690c90-130-90-130 0-260" stroke="#d8d8cf" stroke-width="35" fill="none" stroke-linecap="round"/>
+</svg>

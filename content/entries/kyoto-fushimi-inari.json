@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "sample-kyoto-fushimi-inari",
+  "slug": "kyoto-fushimi-inari",
+  "title": "伏見稲荷大社の朝",
+  "summary": "早朝の千本鳥居をゆっくり歩いた日の記録。人の少ない時間帯ならではの静けさが印象に残りました。",
+  "status": "published",
+  "visitedAt": "2026-04-10",
+  "createdAt": "2026-04-15T09:00:00+09:00",
+  "updatedAt": "2026-04-15T09:00:00+09:00",
+  "tags": ["京都", "神社", "春"],
+  "location": {
+    "name": "伏見稲荷大社",
+    "address": "京都府京都市伏見区深草薮之内町68",
+    "googleMapsUrl": "https://www.google.com/maps/place/Fushimi+Inari+Taisha/"
+  },
+  "coverImage": {
+    "src": "/uploads/kyoto-fushimi-inari/20260410-001.svg",
+    "alt": "朱色の鳥居が並ぶ参道",
+    "caption": "早朝の参道",
+    "width": 2000,
+    "height": 1333
+  },
+  "blocks": [
+    {
+      "id": "block-001",
+      "type": "text",
+      "content": "朝の空気がまだ冷たいうちに駅を出て、参道へ向かいました。朱色の鳥居が少しずつ明るくなっていく様子がとてもきれいでした。\n\n- 人が少ない時間に歩けた\n- 坂道は思ったより長い\n- 途中で見える街の景色が気持ちいい"
+    },
+    {
+      "id": "block-002",
+      "type": "imageGallery",
+      "layout": "grid",
+      "images": [
+        {
+          "src": "/uploads/kyoto-fushimi-inari/20260410-001.svg",
+          "alt": "朱色の鳥居が並ぶ参道",
+          "caption": "千本鳥居",
+          "width": 2000,
+          "height": 1333
+        },
+        {
+          "src": "/uploads/kyoto-fushimi-inari/20260410-002.svg",
+          "alt": "朝日に照らされた石畳",
+          "caption": "静かな石畳",
+          "width": 1600,
+          "height": 1200
+        }
+      ]
+    },
+    {
+      "id": "block-003",
+      "type": "divider"
+    },
+    {
+      "id": "block-004",
+      "type": "heading",
+      "level": 2,
+      "text": "歩いて残る感覚"
+    },
+    {
+      "id": "block-005",
+      "type": "text",
+      "content": "写真に残る景色もよかったのですが、坂道を歩いたあとの息の上がり方や、木々の間から聞こえる音のほうが長く記憶に残りそうです。"
+    }
+  ]
+}

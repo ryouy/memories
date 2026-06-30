@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200" role="img" aria-label="朝日に照らされた石畳">
+  <rect width="1600" height="1200" fill="#efe9dd"/>
+  <circle cx="1250" cy="220" r="150" fill="#e5b56f"/>
+  <path d="M0 420c350-120 680-120 1000-10 220 70 420 75 600 0v790H0z" fill="#7f8b68"/>
+  <path d="M570 500 230 1200h920L920 500z" fill="#c8c0af"/>
+  <path d="M630 610h360M560 760h500M480 940h660" stroke="#a89f91" stroke-width="18"/>
+</svg>

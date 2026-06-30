@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "sample-sapporo-snow-festival",
+  "slug": "sapporo-snow-festival",
+  "title": "札幌雪まつり",
+  "summary": "夜の会場で雪像を眺めた記録。冷たい空気の中で、明かりを受けた雪の輪郭がくっきり見えました。",
+  "status": "draft",
+  "visitedAt": "2026-02-08",
+  "createdAt": "2026-02-10T20:00:00+09:00",
+  "updatedAt": "2026-02-10T20:00:00+09:00",
+  "tags": ["札幌", "イベント", "冬"],
+  "location": {
+    "name": "大通公園",
+    "address": "北海道札幌市中央区大通西",
+    "googleMapsUrl": "https://www.google.com/maps/place/Odori+Park/"
+  },
+  "coverImage": {
+    "src": "/uploads/sapporo-snow-festival/20260208-001.svg",
+    "alt": "夜にライトアップされた雪像",
+    "caption": "雪まつりの夜",
+    "width": 2000,
+    "height": 1333
+  },
+  "blocks": [
+    {
+      "id": "block-001",
+      "type": "text",
+      "content": "下書きのサンプルです。公開画面には表示されません。"
+    },
+    {
+      "id": "block-002",
+      "type": "youtube",
+      "videoId": "dQw4w9WgXcQ",
+      "title": "サンプル動画"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "id": "sample-kyoto-fushimi-inari",
+    "slug": "kyoto-fushimi-inari",
+    "title": "伏見稲荷大社の朝",
+    "summary": "早朝の千本鳥居をゆっくり歩いた日の記録。人の少ない時間帯ならではの静けさが印象に残りました。",
+    "status": "published",
+    "visitedAt": "2026-04-10",
+    "tags": [
+      "京都",
+      "神社",
+      "春"
+    ],
+    "locationName": "伏見稲荷大社",
+    "coverImage": {
+      "src": "/uploads/kyoto-fushimi-inari/20260410-001.svg",
+      "alt": "朱色の鳥居が並ぶ参道",
+      "caption": "早朝の参道",
+      "width": 2000,
+      "height": 1333
+    }
+  },
+  {
+    "id": "sample-hakone-weekend",
+    "slug": "hakone-weekend",
+    "title": "箱根で過ごす週末",
+    "summary": "温泉街の坂道、湖の風、夕方の湯けむり。短い週末でも気分が切り替わる旅でした。",
+    "status": "published",
+    "visitedAt": "2026-02-22",
+    "tags": [
+      "箱根",
+      "温泉",
+      "冬"
+    ],
+    "locationName": "箱根湯本",
+    "coverImage": {
+      "src": "/uploads/hakone-weekend/20260222-001.svg",
+      "alt": "山あいの温泉街",
+      "caption": "夕方の温泉街",
+      "width": 2000,
+      "height": 1333
+    }
+  },
+  {
+    "id": "sample-sapporo-snow-festival",
+    "slug": "sapporo-snow-festival",
+    "title": "札幌雪まつり",
+    "summary": "夜の会場で雪像を眺めた記録。冷たい空気の中で、明かりを受けた雪の輪郭がくっきり見えました。",
+    "status": "draft",
+    "visitedAt": "2026-02-08",
+    "tags": [
+      "札幌",
+      "イベント",
+      "冬"
+    ],
+    "locationName": "大通公園",
+    "coverImage": {
+      "src": "/uploads/sapporo-snow-festival/20260208-001.svg",
+      "alt": "夜にライトアップされた雪像",
+      "caption": "雪まつりの夜",
+      "width": 2000,
+      "height": 1333
+    }
+  }
+]
