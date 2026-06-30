@@ -1,5 +1,7 @@
 # Memories
 
+[サイト](https://trvlmmrs.vercel.app/)
+
 写真と文章で旅行記録を残すNext.jsアプリです。データは外部DBではなく、GitHubリポジトリ内の `content/` と `public/uploads/` で管理します。
 
 ## Setup
