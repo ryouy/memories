@@ -21,29 +21,24 @@ export default async function HomePage({
   return (
     <SiteShell settings={settings}>
       <main className="mx-auto max-w-[1360px] px-5 pb-16 sm:px-8 lg:px-10">
-        <section className="grid gap-10 pb-12 pt-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
-          <div className="max-w-3xl">
-            <p className="mb-4 text-sm uppercase tracking-[0.18em] text-moss">Travel journal</p>
-            <h1 className="font-serif text-5xl leading-[1.08] sm:text-6xl lg:text-7xl">{settings.title}</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-stone-600">{settings.description}</p>
-          </div>
-          <aside className="space-y-4 rounded-lg border border-stone-200 bg-white p-5">
+        <section className="pb-8">
+          <aside className="flex flex-wrap gap-5 border-b border-stone-200 pb-5">
             <div>
-              <h2 className="mb-3 text-sm font-semibold">Years</h2>
+              <h2 className="mb-2 text-sm font-semibold">年</h2>
               <div className="flex flex-wrap gap-2">
-                {years.map(([year, count]) => (
+                {years.map(([year]) => (
                   <a key={year} href={`/?year=${year}`} className="rounded-full bg-stone-100 px-3 py-1 text-sm">
-                    {year} ({count})
+                    {year}
                   </a>
                 ))}
               </div>
             </div>
             <div>
-              <h2 className="mb-3 text-sm font-semibold">Tags</h2>
+              <h2 className="mb-2 text-sm font-semibold">タグ</h2>
               <div className="flex flex-wrap gap-2">
-                {tags.map(([tag, count]) => (
+                {tags.map(([tag]) => (
                   <a key={tag} href={`/?tag=${encodeURIComponent(tag)}`} className="rounded-full bg-stone-100 px-3 py-1 text-sm">
-                    {tag} ({count})
+                    {tag}
                   </a>
                 ))}
               </div>
@@ -51,10 +46,6 @@ export default async function HomePage({
           </aside>
         </section>
         <section>
-          <div className="mb-6 flex items-end justify-between gap-4">
-            <h2 className="font-serif text-3xl">Latest entries</h2>
-            <span className="text-sm text-stone-500">{entries.length} records</span>
-          </div>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {entries.map((entry) => (
               <EntryCard key={entry.id} entry={entry} />

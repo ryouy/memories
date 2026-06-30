@@ -8,9 +8,9 @@ export default async function AdminEntriesPage() {
   return (
     <AdminShell>
       <div className="mb-6 flex items-center justify-between gap-4">
-        <h1 className="font-serif text-4xl">記録一覧</h1>
+        <h1 className="font-serif text-4xl">一覧</h1>
         <Link href="/admin/entries/new" className="rounded-md bg-ink px-4 py-2 text-sm text-white">
-          新規作成
+          追加
         </Link>
       </div>
       <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">

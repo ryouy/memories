@@ -21,7 +21,6 @@ export function EntryCard({ entry }: { entry: Entry }) {
             {entry.location?.name ? <span>{entry.location.name}</span> : null}
           </div>
           <h2 className="font-serif text-2xl leading-tight">{entry.title}</h2>
-          <p className="line-clamp-3 text-sm leading-7 text-stone-600">{entry.summary}</p>
           <div className="flex flex-wrap gap-2 pt-1">
             {entry.tags.map((tag) => (
               <span key={tag} className="rounded-full bg-stone-100 px-3 py-1 text-xs text-stone-600">

@@ -25,7 +25,7 @@ export function LoginForm() {
         if (response.ok) {
           router.push("/admin");
         } else {
-          setError("パスワードナンバーが正しくありません。しばらく時間をおいてから再度お試しください。");
+          setError("ログインできません。");
         }
       }}
     >
@@ -36,7 +36,7 @@ export function LoginForm() {
         value={pin}
         onChange={(event) => setPin(event.target.value.replace(/\D/g, "").slice(0, 4))}
         className="h-12 w-full rounded-md border border-stone-300 px-4 text-center text-2xl tracking-[0.35em]"
-        aria-label="4桁のパスワードナンバー"
+        aria-label="PIN"
       />
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
       <button disabled={pending || pin.length !== 4} className="h-11 w-full rounded-md bg-ink px-4 text-white disabled:opacity-50">

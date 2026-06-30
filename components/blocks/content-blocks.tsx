@@ -76,7 +76,7 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
                 />
               ) : isAllowedGoogleMapsUrl(block.googleMapsUrl) ? (
                 <a className="inline-flex rounded-md bg-ink px-4 py-3 text-sm text-white" href={block.googleMapsUrl} target="_blank" rel="noreferrer">
-                  Google Mapsで開く
+                  地図を開く
                 </a>
               ) : null}
             </section>

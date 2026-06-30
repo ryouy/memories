@@ -11,9 +11,9 @@ export default async function AdminPage() {
   return (
     <AdminShell>
       <div className="mb-8 flex items-center justify-between gap-4">
-        <h1 className="font-serif text-4xl">管理トップ</h1>
+        <h1 className="font-serif text-4xl">管理</h1>
         <Link href="/admin/entries/new" className="rounded-md bg-ink px-4 py-2 text-sm text-white">
-          新規作成
+          追加
         </Link>
       </div>
       <div className="grid gap-4 sm:grid-cols-4">
@@ -26,7 +26,7 @@ export default async function AdminPage() {
       </div>
       <div className="mt-8 rounded-lg border border-stone-200 bg-white p-5">
         <Link href="/admin/entries" className="text-sm underline">
-          記録一覧を開く
+          一覧
         </Link>
       </div>
     </AdminShell>

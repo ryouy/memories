@@ -33,6 +33,20 @@ const emptyImage: ImageItem = {
   height: 1000
 };
 
+const blockOptions: { type: ContentBlock["type"]; label: string }[] = [
+  { type: "text", label: "文章" },
+  { type: "image", label: "写真" },
+  { type: "imageGallery", label: "複数写真" },
+  { type: "map", label: "マップ" },
+  { type: "heading", label: "見出し" },
+  { type: "youtube", label: "YouTube" },
+  { type: "divider", label: "区切り" }
+];
+
+function blockLabel(type: ContentBlock["type"]) {
+  return blockOptions.find((option) => option.type === type)?.label ?? type;
+}
+
 function createBlock(type: ContentBlock["type"]): ContentBlock {
   const id = `block-${crypto.randomUUID()}`;
   if (type === "text") return { id, type, content: "" };
@@ -146,6 +160,10 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
     setBlocks((current) => current.map((block, i) => (i === index ? next : block)));
   }
 
+  function insertBlock(index: number, type: ContentBlock["type"]) {
+    setBlocks((current) => [...current.slice(0, index), createBlock(type), ...current.slice(index)]);
+  }
+
   function moveBlock(index: number, direction: -1 | 1) {
     setBlocks((current) => {
       const target = index + direction;
@@ -159,59 +177,88 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
   return (
     <form className="space-y-8" onSubmit={(event) => event.preventDefault()}>
       <section className="space-y-4 rounded-lg border border-stone-200 bg-white p-5">
-        <h2 className="font-serif text-2xl">基本情報</h2>
-        <label className="block text-sm">タイトル<input className="mt-1 w-full rounded-md border p-3" {...form.register("title", { required: true })} /></label>
-        <label className="block text-sm">slug<input className="mt-1 w-full rounded-md border p-3" {...form.register("slug")} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title))} /></label>
-        <label className="block text-sm">概要<textarea className="mt-1 min-h-24 w-full rounded-md border p-3" {...form.register("summary", { required: true })} /></label>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block text-sm">訪問日<input type="date" className="mt-1 w-full rounded-md border p-3" {...form.register("visitedAt")} /></label>
-          <label className="block text-sm">公開状態<select className="mt-1 w-full rounded-md border p-3" {...form.register("status")}><option value="draft">下書き</option><option value="published">公開</option></select></label>
+        <div className="grid gap-4 md:grid-cols-[1fr_180px]">
+          <label className="block text-sm">
+            タイトル
+            <input className="mt-1 w-full rounded-md border border-stone-300 p-3 text-lg" {...form.register("title", { required: true })} />
+          </label>
+          <label className="block text-sm">
+            訪問日
+            <input type="date" className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("visitedAt")} />
+          </label>
         </div>
-        <label className="block text-sm">タグ（カンマ区切り）<input className="mt-1 w-full rounded-md border p-3" {...form.register("tags")} /></label>
-      </section>
-
-      <section className="space-y-4 rounded-lg border border-stone-200 bg-white p-5">
-        <h2 className="font-serif text-2xl">場所とカバー画像</h2>
-        <label className="block text-sm">場所名<input className="mt-1 w-full rounded-md border p-3" {...form.register("locationName")} /></label>
-        <label className="block text-sm">住所<input className="mt-1 w-full rounded-md border p-3" {...form.register("locationAddress")} /></label>
-        <label className="block text-sm">Google Maps URL<input className="mt-1 w-full rounded-md border p-3" {...form.register("locationGoogleMapsUrl")} /></label>
-        <label className="block text-sm">カバー画像パス<input className="mt-1 w-full rounded-md border p-3" placeholder="/uploads/slug/photo.webp" {...form.register("coverSrc")} /></label>
-        <label className="block text-sm">カバー画像alt<input className="mt-1 w-full rounded-md border p-3" {...form.register("coverAlt")} /></label>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block text-sm">幅<input type="number" className="mt-1 w-full rounded-md border p-3" {...form.register("coverWidth", { valueAsNumber: true })} /></label>
-          <label className="block text-sm">高さ<input type="number" className="mt-1 w-full rounded-md border p-3" {...form.register("coverHeight", { valueAsNumber: true })} /></label>
+        <label className="block text-sm">
+          概要
+          <textarea className="mt-1 min-h-20 w-full rounded-md border border-stone-300 p-3" {...form.register("summary", { required: true })} />
+        </label>
+        <div className="grid gap-4 md:grid-cols-[1fr_180px]">
+          <label className="block text-sm">
+            タグ
+            <input className="mt-1 w-full rounded-md border border-stone-300 p-3" placeholder="京都, 春" {...form.register("tags")} />
+          </label>
+          <label className="block text-sm">
+            状態
+            <select className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("status")}>
+              <option value="draft">下書き</option>
+              <option value="published">公開</option>
+            </select>
+          </label>
         </div>
+        <details className="rounded-md bg-stone-50 p-4">
+          <summary className="cursor-pointer text-sm font-medium">詳細</summary>
+          <div className="mt-4 space-y-4">
+            <label className="block text-sm">
+              slug
+              <input className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("slug")} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title))} />
+            </label>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block text-sm">場所名<input className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("locationName")} /></label>
+              <label className="block text-sm">住所<input className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("locationAddress")} /></label>
+            </div>
+            <label className="block text-sm">
+              地図
+              <input className="mt-1 w-full rounded-md border border-stone-300 p-3" placeholder="https://www.google.com/maps/..." {...form.register("locationGoogleMapsUrl")} />
+            </label>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block text-sm">カバー画像パス<input className="mt-1 w-full rounded-md border border-stone-300 p-3" placeholder="/uploads/slug/photo.webp" {...form.register("coverSrc")} /></label>
+              <label className="block text-sm">カバー画像alt<input className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("coverAlt")} /></label>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="block text-sm">幅<input type="number" className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("coverWidth", { valueAsNumber: true })} /></label>
+              <label className="block text-sm">高さ<input type="number" className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("coverHeight", { valueAsNumber: true })} /></label>
+            </div>
+          </div>
+        </details>
       </section>
 
       <section className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-serif text-3xl">本文ブロック</h2>
-          <select className="rounded-md border bg-white p-3" defaultValue="" onChange={(event) => {
+          <h2 className="font-serif text-3xl">本文</h2>
+          <select className="rounded-md border border-stone-300 bg-white p-3" defaultValue="" onChange={(event) => {
             if (!event.target.value) return;
             setBlocks((current) => [...current, createBlock(event.target.value as ContentBlock["type"])]);
             event.target.value = "";
           }}>
-            <option value="">ブロックを追加</option>
-            <option value="text">文章</option>
-            <option value="heading">見出し</option>
-            <option value="image">写真1枚</option>
-            <option value="imageGallery">写真ギャラリー</option>
-            <option value="map">Google Maps</option>
-            <option value="youtube">YouTube</option>
-            <option value="divider">区切り線</option>
+            <option value="">追加</option>
+            {blockOptions.map((option) => (
+              <option key={option.type} value={option.type}>{option.label}</option>
+            ))}
           </select>
         </div>
+        <BlockInsert onAdd={(type) => insertBlock(0, type)} />
         {blocks.map((block, index) => (
-          <BlockEditor
-            key={block.id}
-            block={block}
-            index={index}
-            uploadSlug={entryPayload.slug}
-            onChange={(next) => updateBlock(index, next)}
-            onMove={moveBlock}
-            onDuplicate={() => setBlocks((current) => [...current.slice(0, index + 1), { ...block, id: `block-${crypto.randomUUID()}` }, ...current.slice(index + 1)])}
-            onDelete={() => setBlocks((current) => current.filter((_, i) => i !== index))}
-          />
+          <div key={block.id} className="space-y-3">
+            <BlockEditor
+              block={block}
+              index={index}
+              uploadSlug={entryPayload.slug}
+              onChange={(next) => updateBlock(index, next)}
+              onMove={moveBlock}
+              onDuplicate={() => setBlocks((current) => [...current.slice(0, index + 1), { ...block, id: `block-${crypto.randomUUID()}` }, ...current.slice(index + 1)])}
+              onDelete={() => setBlocks((current) => current.filter((_, i) => i !== index))}
+            />
+            <BlockInsert onAdd={(type) => insertBlock(index + 1, type)} />
+          </div>
         ))}
       </section>
 
@@ -222,6 +269,38 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
         <button type="button" onClick={() => router.push("/admin/entries")} className="rounded-md border border-stone-300 bg-white px-4 py-3 text-sm">キャンセル</button>
       </div>
     </form>
+  );
+}
+
+function BlockInsert({ onAdd }: { onAdd: (type: ContentBlock["type"]) => void }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed border-stone-300 bg-white/70 p-3">
+      <span className="text-xs text-stone-500">追加</span>
+      {blockOptions.slice(0, 4).map((option) => (
+        <button
+          key={option.type}
+          type="button"
+          className="rounded-md border border-stone-300 bg-white px-3 py-2 text-sm hover:bg-stone-50"
+          onClick={() => onAdd(option.type)}
+        >
+          {option.label}
+        </button>
+      ))}
+      <select
+        className="rounded-md border border-stone-300 bg-white px-3 py-2 text-sm"
+        defaultValue=""
+        onChange={(event) => {
+          if (!event.target.value) return;
+          onAdd(event.target.value as ContentBlock["type"]);
+          event.target.value = "";
+        }}
+      >
+        <option value="">その他</option>
+        {blockOptions.slice(4).map((option) => (
+          <option key={option.type} value={option.type}>{option.label}</option>
+        ))}
+      </select>
+    </div>
   );
 }
 
@@ -237,7 +316,7 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
   return (
     <article className="space-y-4 rounded-lg border border-stone-200 bg-white p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-semibold">{index + 1}. {block.type}</h3>
+        <h3 className="font-semibold">{index + 1}. {blockLabel(block.type)}</h3>
         <div className="flex flex-wrap gap-2">
           <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={() => onMove(index, -1)}>上へ</button>
           <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={() => onMove(index, 1)}>下へ</button>
@@ -246,7 +325,7 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
         </div>
       </div>
       {block.type === "text" ? (
-        <textarea className="min-h-36 w-full rounded-md border p-3" value={block.content} onChange={(event) => onChange({ ...block, content: event.target.value })} />
+        <textarea className="min-h-40 w-full rounded-md border border-stone-300 p-3 leading-7" placeholder="本文" value={block.content} onChange={(event) => onChange({ ...block, content: event.target.value })} />
       ) : null}
       {block.type === "heading" ? (
         <div className="grid gap-3 sm:grid-cols-[120px_1fr]">
@@ -276,14 +355,19 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
               onChange({ ...block, images: [...existing, ...images] });
             }}
           />
-          <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={() => onChange({ ...block, images: [...block.images, { ...emptyImage }] })}>手入力で画像を追加</button>
+          <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={() => onChange({ ...block, images: [...block.images, { ...emptyImage }] })}>手入力</button>
         </div>
       ) : null}
       {block.type === "map" ? (
-        <div className="space-y-3">
-          <input className="w-full rounded-md border p-3" placeholder="タイトル" value={block.title ?? ""} onChange={(event) => onChange({ ...block, title: event.target.value })} />
-          <input className="w-full rounded-md border p-3" placeholder="Google Maps URL" value={block.googleMapsUrl} onChange={(event) => onChange({ ...block, googleMapsUrl: event.target.value })} />
-        </div>
+        <label className="block text-sm">
+          地図
+          <input
+            className="mt-1 w-full rounded-md border border-stone-300 p-3"
+            placeholder="Google Maps URL"
+            value={block.googleMapsUrl}
+            onChange={(event) => onChange({ ...block, googleMapsUrl: event.target.value })}
+          />
+        </label>
       ) : null}
       {block.type === "youtube" ? (
         <div className="space-y-3">
@@ -341,7 +425,7 @@ function GalleryBatchUploader({ uploadSlug, onUploaded }: { uploadSlug: string; 
   return (
     <div className="space-y-3 rounded-md border border-dashed border-stone-300 bg-stone-50 p-4">
       <label className="block text-sm">
-        複数写真を追加
+        写真
         <input
           type="file"
           multiple
@@ -429,13 +513,25 @@ function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; upload
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   return (
-    <div className="grid gap-3 rounded-md bg-stone-50 p-3 sm:grid-cols-2">
-      <label className="block text-sm sm:col-span-2">
-        写真アップロード
+    <div className="space-y-3 rounded-md bg-stone-50 p-3">
+      {image.src ? (
+        <div className="grid gap-3 sm:grid-cols-[160px_1fr] sm:items-start">
+          <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-200">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={image.src} alt={image.alt || ""} className="h-full w-full object-cover" />
+          </div>
+          <div className="space-y-3">
+            <input className="w-full rounded-md border border-stone-300 p-3" placeholder="説明" value={image.alt} onChange={(event) => onChange({ ...image, alt: event.target.value })} />
+            <input className="w-full rounded-md border border-stone-300 p-3" placeholder="キャプション" value={image.caption ?? ""} onChange={(event) => onChange({ ...image, caption: event.target.value })} />
+          </div>
+        </div>
+      ) : null}
+      <label className="block text-sm">
+        写真
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp,.heic"
-          className="mt-1 block w-full rounded-md border bg-white p-3"
+          className="mt-1 block w-full rounded-md border border-stone-300 bg-white p-3"
           disabled={uploading || !uploadSlug}
           onChange={async (event) => {
             const file = event.target.files?.[0];
@@ -464,11 +560,16 @@ function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; upload
       </label>
       {uploading ? <p className="text-sm text-stone-500">アップロード中...</p> : null}
       {uploadError ? <p className="text-sm text-red-700">{uploadError}</p> : null}
-      <input className="rounded-md border p-3 sm:col-span-2" placeholder="/uploads/slug/photo.webp" value={image.src} onChange={(event) => onChange({ ...image, src: event.target.value })} />
-      <input className="rounded-md border p-3" placeholder="alt" value={image.alt} onChange={(event) => onChange({ ...image, alt: event.target.value })} />
-      <input className="rounded-md border p-3" placeholder="caption" value={image.caption ?? ""} onChange={(event) => onChange({ ...image, caption: event.target.value })} />
-      <input type="number" className="rounded-md border p-3" value={image.width} onChange={(event) => onChange({ ...image, width: Number(event.target.value) })} />
-      <input type="number" className="rounded-md border p-3" value={image.height} onChange={(event) => onChange({ ...image, height: Number(event.target.value) })} />
+      <details>
+        <summary className="cursor-pointer text-sm text-stone-500">詳細</summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <input className="rounded-md border border-stone-300 p-3 sm:col-span-2" placeholder="/uploads/slug/photo.webp" value={image.src} onChange={(event) => onChange({ ...image, src: event.target.value })} />
+          <input className="rounded-md border border-stone-300 p-3" placeholder="alt" value={image.alt} onChange={(event) => onChange({ ...image, alt: event.target.value })} />
+          <input className="rounded-md border border-stone-300 p-3" placeholder="caption" value={image.caption ?? ""} onChange={(event) => onChange({ ...image, caption: event.target.value })} />
+          <input type="number" className="rounded-md border border-stone-300 p-3" value={image.width} onChange={(event) => onChange({ ...image, width: Number(event.target.value) })} />
+          <input type="number" className="rounded-md border border-stone-300 p-3" value={image.height} onChange={(event) => onChange({ ...image, height: Number(event.target.value) })} />
+        </div>
+      </details>
     </div>
   );
 }
