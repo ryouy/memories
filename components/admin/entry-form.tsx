@@ -175,79 +175,45 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
   }
 
   return (
-    <form className="space-y-8" onSubmit={(event) => event.preventDefault()}>
-      <section className="space-y-4 rounded-lg border border-stone-200 bg-white p-5">
-        <div className="grid gap-4 md:grid-cols-[1fr_180px]">
-          <label className="block text-sm">
-            タイトル
-            <input className="mt-1 w-full rounded-md border border-stone-300 p-3 text-lg" {...form.register("title", { required: true })} />
-          </label>
-          <label className="block text-sm">
-            訪問日
-            <input type="date" className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("visitedAt")} />
-          </label>
+    <form className="mx-auto max-w-[880px] space-y-8 bg-white" onSubmit={(event) => event.preventDefault()}>
+      <section className="space-y-5 px-2 pt-6">
+        <input
+          className="w-full border-0 bg-transparent font-serif text-5xl leading-tight outline-none placeholder:text-stone-300 sm:text-6xl"
+          placeholder="タイトル"
+          {...form.register("title", { required: true })}
+        />
+        <textarea
+          className="min-h-16 w-full resize-none border-0 bg-transparent text-lg leading-8 text-stone-600 outline-none placeholder:text-stone-300"
+          placeholder="概要"
+          {...form.register("summary", { required: true })}
+        />
+        <div className="flex flex-wrap gap-3 text-sm text-stone-500">
+          <input type="date" className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("visitedAt")} />
+          <input className="min-w-64 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="タグ" {...form.register("tags")} />
+          <select className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("status")}>
+            <option value="draft">下書き</option>
+            <option value="published">公開</option>
+          </select>
         </div>
-        <label className="block text-sm">
-          概要
-          <textarea className="mt-1 min-h-20 w-full rounded-md border border-stone-300 p-3" {...form.register("summary", { required: true })} />
-        </label>
-        <div className="grid gap-4 md:grid-cols-[1fr_180px]">
-          <label className="block text-sm">
-            タグ
-            <input className="mt-1 w-full rounded-md border border-stone-300 p-3" placeholder="京都, 春" {...form.register("tags")} />
-          </label>
-          <label className="block text-sm">
-            状態
-            <select className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("status")}>
-              <option value="draft">下書き</option>
-              <option value="published">公開</option>
-            </select>
-          </label>
-        </div>
-        <details className="rounded-md bg-stone-50 p-4">
-          <summary className="cursor-pointer text-sm font-medium">詳細</summary>
-          <div className="mt-4 space-y-4">
-            <label className="block text-sm">
-              slug
-              <input className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("slug")} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title))} />
-            </label>
-            <div className="grid gap-4 md:grid-cols-2">
-              <label className="block text-sm">場所名<input className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("locationName")} /></label>
-              <label className="block text-sm">住所<input className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("locationAddress")} /></label>
-            </div>
-            <label className="block text-sm">
-              地図
-              <input className="mt-1 w-full rounded-md border border-stone-300 p-3" placeholder="https://www.google.com/maps/..." {...form.register("locationGoogleMapsUrl")} />
-            </label>
-            <div className="grid gap-4 md:grid-cols-2">
-              <label className="block text-sm">カバー画像パス<input className="mt-1 w-full rounded-md border border-stone-300 p-3" placeholder="/uploads/slug/photo.webp" {...form.register("coverSrc")} /></label>
-              <label className="block text-sm">カバー画像alt<input className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("coverAlt")} /></label>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="block text-sm">幅<input type="number" className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("coverWidth", { valueAsNumber: true })} /></label>
-              <label className="block text-sm">高さ<input type="number" className="mt-1 w-full rounded-md border border-stone-300 p-3" {...form.register("coverHeight", { valueAsNumber: true })} /></label>
-            </div>
+        <details className="border-t border-stone-100 pt-3">
+          <summary className="cursor-pointer text-sm text-stone-500">詳細</summary>
+          <div className="mt-4 grid gap-3 text-sm md:grid-cols-2">
+            <input className="rounded-md border border-stone-200 p-3" placeholder="slug" {...form.register("slug")} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title))} />
+            <input className="rounded-md border border-stone-200 p-3" placeholder="場所" {...form.register("locationName")} />
+            <input className="rounded-md border border-stone-200 p-3 md:col-span-2" placeholder="住所" {...form.register("locationAddress")} />
+            <input className="rounded-md border border-stone-200 p-3 md:col-span-2" placeholder="Google Maps URL" {...form.register("locationGoogleMapsUrl")} />
+            <input className="rounded-md border border-stone-200 p-3" placeholder="カバー画像" {...form.register("coverSrc")} />
+            <input className="rounded-md border border-stone-200 p-3" placeholder="カバー説明" {...form.register("coverAlt")} />
+            <input type="number" className="rounded-md border border-stone-200 p-3" placeholder="幅" {...form.register("coverWidth", { valueAsNumber: true })} />
+            <input type="number" className="rounded-md border border-stone-200 p-3" placeholder="高さ" {...form.register("coverHeight", { valueAsNumber: true })} />
           </div>
         </details>
       </section>
 
-      <section className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-serif text-3xl">本文</h2>
-          <select className="rounded-md border border-stone-300 bg-white p-3" defaultValue="" onChange={(event) => {
-            if (!event.target.value) return;
-            setBlocks((current) => [...current, createBlock(event.target.value as ContentBlock["type"])]);
-            event.target.value = "";
-          }}>
-            <option value="">追加</option>
-            {blockOptions.map((option) => (
-              <option key={option.type} value={option.type}>{option.label}</option>
-            ))}
-          </select>
-        </div>
+      <section className="space-y-2">
         <BlockInsert onAdd={(type) => insertBlock(0, type)} />
         {blocks.map((block, index) => (
-          <div key={block.id} className="space-y-3">
+          <div key={block.id} className="group space-y-2">
             <BlockEditor
               block={block}
               index={index}
@@ -274,20 +240,20 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
 
 function BlockInsert({ onAdd }: { onAdd: (type: ContentBlock["type"]) => void }) {
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed border-stone-300 bg-white/70 p-3">
-      <span className="text-xs text-stone-500">追加</span>
+    <div className="flex flex-wrap items-center gap-2 py-2 opacity-35 transition group-hover:opacity-100 hover:opacity-100">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full border border-stone-300 text-lg leading-none text-stone-500">+</span>
       {blockOptions.slice(0, 4).map((option) => (
         <button
           key={option.type}
           type="button"
-          className="rounded-md border border-stone-300 bg-white px-3 py-2 text-sm hover:bg-stone-50"
+          className="rounded-full border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-600 hover:border-stone-400"
           onClick={() => onAdd(option.type)}
         >
           {option.label}
         </button>
       ))}
       <select
-        className="rounded-md border border-stone-300 bg-white px-3 py-2 text-sm"
+        className="rounded-full border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-600"
         defaultValue=""
         onChange={(event) => {
           if (!event.target.value) return;
@@ -314,23 +280,23 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
   onDelete: () => void;
 }) {
   return (
-    <article className="space-y-4 rounded-lg border border-stone-200 bg-white p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-semibold">{index + 1}. {blockLabel(block.type)}</h3>
-        <div className="flex flex-wrap gap-2">
-          <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={() => onMove(index, -1)}>上へ</button>
-          <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={() => onMove(index, 1)}>下へ</button>
-          <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={onDuplicate}>複製</button>
-          <button type="button" className="rounded-md border border-red-300 px-3 py-2 text-sm text-red-700" onClick={onDelete}>削除</button>
+    <article className="relative py-2">
+      <div className="absolute -left-16 top-3 hidden w-14 flex-col items-end gap-1 opacity-0 transition group-hover:opacity-100 md:flex">
+        <span className="text-[11px] text-stone-400">{blockLabel(block.type)}</span>
+        <div className="flex gap-1">
+          <button type="button" className="text-xs text-stone-400 hover:text-stone-900" onClick={() => onMove(index, -1)}>↑</button>
+          <button type="button" className="text-xs text-stone-400 hover:text-stone-900" onClick={() => onMove(index, 1)}>↓</button>
+          <button type="button" className="text-xs text-stone-400 hover:text-stone-900" onClick={onDuplicate}>複</button>
+          <button type="button" className="text-xs text-red-400 hover:text-red-700" onClick={onDelete}>×</button>
         </div>
       </div>
       {block.type === "text" ? (
-        <textarea className="min-h-40 w-full rounded-md border border-stone-300 p-3 leading-7" placeholder="本文" value={block.content} onChange={(event) => onChange({ ...block, content: event.target.value })} />
+        <textarea className="min-h-32 w-full resize-y border-0 bg-transparent p-0 text-[17px] leading-9 outline-none placeholder:text-stone-300" placeholder="本文" value={block.content} onChange={(event) => onChange({ ...block, content: event.target.value })} />
       ) : null}
       {block.type === "heading" ? (
-        <div className="grid gap-3 sm:grid-cols-[120px_1fr]">
-          <select className="rounded-md border p-3" value={block.level} onChange={(event) => onChange({ ...block, level: Number(event.target.value) as 2 | 3 })}><option value={2}>H2</option><option value={3}>H3</option></select>
-          <input className="rounded-md border p-3" value={block.text} onChange={(event) => onChange({ ...block, text: event.target.value })} />
+        <div className="grid gap-2 sm:grid-cols-[76px_1fr]">
+          <select className="rounded-md border border-stone-200 p-2 text-sm" value={block.level} onChange={(event) => onChange({ ...block, level: Number(event.target.value) as 2 | 3 })}><option value={2}>H2</option><option value={3}>H3</option></select>
+          <input className="border-0 bg-transparent font-serif text-3xl outline-none placeholder:text-stone-300" placeholder="見出し" value={block.text} onChange={(event) => onChange({ ...block, text: event.target.value })} />
         </div>
       ) : null}
       {block.type === "image" ? <ImageFields uploadSlug={uploadSlug} image={block.image} onChange={(image) => onChange({ ...block, image })} /> : null}
@@ -359,10 +325,10 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
         </div>
       ) : null}
       {block.type === "map" ? (
-        <label className="block text-sm">
-          地図
+        <label className="block rounded-lg border border-stone-200 p-4 text-sm">
+          <span className="text-stone-500">地図</span>
           <input
-            className="mt-1 w-full rounded-md border border-stone-300 p-3"
+            className="mt-2 w-full border-0 bg-transparent p-0 text-base outline-none placeholder:text-stone-300"
             placeholder="Google Maps URL"
             value={block.googleMapsUrl}
             onChange={(event) => onChange({ ...block, googleMapsUrl: event.target.value })}
@@ -370,15 +336,15 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
         </label>
       ) : null}
       {block.type === "youtube" ? (
-        <div className="space-y-3">
-          <input className="w-full rounded-md border p-3" placeholder="タイトル" value={block.title} onChange={(event) => onChange({ ...block, title: event.target.value })} />
-          <input className="w-full rounded-md border p-3" placeholder="YouTube URL または videoId" value={block.videoId} onChange={(event) => {
+        <div className="space-y-2 rounded-lg border border-stone-200 p-4">
+          <input className="w-full border-0 bg-transparent p-0 outline-none placeholder:text-stone-300" placeholder="タイトル" value={block.title} onChange={(event) => onChange({ ...block, title: event.target.value })} />
+          <input className="w-full border-0 bg-transparent p-0 text-sm text-stone-500 outline-none placeholder:text-stone-300" placeholder="YouTube URL" value={block.videoId} onChange={(event) => {
             const parsed = parseYouTubeUrl(event.target.value);
             onChange({ ...block, videoId: parsed?.videoId ?? event.target.value, startSeconds: parsed?.startSeconds });
           }} />
         </div>
       ) : null}
-      {block.type === "divider" ? <p className="text-sm text-stone-500">区切り線を表示します。</p> : null}
+      {block.type === "divider" ? <hr className="border-stone-200" /> : null}
     </article>
   );
 }
@@ -423,14 +389,14 @@ function GalleryBatchUploader({ uploadSlug, onUploaded }: { uploadSlug: string; 
   }
 
   return (
-    <div className="space-y-3 rounded-md border border-dashed border-stone-300 bg-stone-50 p-4">
+    <div className="space-y-3 rounded-lg border border-dashed border-stone-200 bg-white p-4">
       <label className="block text-sm">
         写真
         <input
           type="file"
           multiple
           accept="image/jpeg,image/png,image/webp,.heic"
-          className="mt-1 block w-full rounded-md border bg-white p-3"
+          className="mt-2 block w-full rounded-md border border-stone-200 bg-white p-3"
           disabled={uploading || !uploadSlug}
           onChange={async (event) => {
             const files = Array.from(event.target.files ?? []);
@@ -513,25 +479,25 @@ function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; upload
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   return (
-    <div className="space-y-3 rounded-md bg-stone-50 p-3">
+    <div className="space-y-3">
       {image.src ? (
-        <div className="grid gap-3 sm:grid-cols-[160px_1fr] sm:items-start">
-          <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-200">
+        <figure className="space-y-3">
+          <div className="overflow-hidden rounded-lg bg-stone-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={image.src} alt={image.alt || ""} className="h-full w-full object-cover" />
+            <img src={image.src} alt={image.alt || ""} className="h-auto w-full" />
           </div>
-          <div className="space-y-3">
-            <input className="w-full rounded-md border border-stone-300 p-3" placeholder="説明" value={image.alt} onChange={(event) => onChange({ ...image, alt: event.target.value })} />
-            <input className="w-full rounded-md border border-stone-300 p-3" placeholder="キャプション" value={image.caption ?? ""} onChange={(event) => onChange({ ...image, caption: event.target.value })} />
+          <div className="grid gap-2 sm:grid-cols-2">
+            <input className="rounded-md border border-stone-200 p-2 text-sm" placeholder="説明" value={image.alt} onChange={(event) => onChange({ ...image, alt: event.target.value })} />
+            <input className="rounded-md border border-stone-200 p-2 text-sm" placeholder="キャプション" value={image.caption ?? ""} onChange={(event) => onChange({ ...image, caption: event.target.value })} />
           </div>
-        </div>
+        </figure>
       ) : null}
-      <label className="block text-sm">
+      <label className="block rounded-lg border border-dashed border-stone-200 p-4 text-sm text-stone-500">
         写真
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp,.heic"
-          className="mt-1 block w-full rounded-md border border-stone-300 bg-white p-3"
+          className="mt-2 block w-full rounded-md border border-stone-200 bg-white p-3"
           disabled={uploading || !uploadSlug}
           onChange={async (event) => {
             const file = event.target.files?.[0];

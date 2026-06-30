@@ -15,7 +15,7 @@ export default async function EntryPage({ params }: { params: Promise<{ slug: st
   if (!entry) notFound();
 
   return (
-    <SiteShell settings={settings}>
+    <SiteShell settings={settings} adminTarget={`/admin/entries/${entry.slug}/edit`} adminLabel="編集">
       <main className="pb-16">
         {entry.coverImage ? (
           <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-10">

@@ -3,13 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function AdminQuickLogin() {
+export function AdminQuickLogin({ target = "/admin", label = "管理" }: { target?: string; label?: string }) {
   const router = useRouter();
   const [pin, setPin] = useState("");
   const [pending, setPending] = useState(false);
 
   async function login() {
-    if (pin.length !== 4 || pending) return;
+    if (pending) return;
+    if (pin.length !== 4) {
+      router.push(target);
+      return;
+    }
     setPending(true);
     const response = await fetch("/api/admin/login", {
       method: "POST",
@@ -17,7 +21,7 @@ export function AdminQuickLogin() {
       body: JSON.stringify({ pin })
     });
     setPending(false);
-    if (response.ok) router.push("/admin");
+    if (response.ok) router.push(target);
     else router.push("/admin/login");
   }
 
@@ -38,10 +42,10 @@ export function AdminQuickLogin() {
       <button
         type="button"
         onClick={login}
-        disabled={pin.length !== 4 || pending}
+        disabled={pending}
         className="h-9 rounded-md border border-stone-300 bg-white px-3 text-sm disabled:opacity-40"
       >
-        管理
+        {label}
       </button>
     </div>
   );
