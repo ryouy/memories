@@ -9,7 +9,7 @@ export default async function EditEntryPage({ params }: { params: Promise<{ slug
   if (!entry) notFound();
   return (
     <AdminShell>
-      <EntryForm entry={entry} />
+      <EntryForm key={entry.slug} entry={entry} />
     </AdminShell>
   );
 }

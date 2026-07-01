@@ -78,28 +78,41 @@ function defaults(entry?: Entry): FormValues {
 
 export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
   const router = useRouter();
-  const storageKey = `memories-entry-draft-${entry?.slug ?? "new"}`;
+  const entryKey = entry?.slug ?? "new";
+  const storageKey = `memories-entry-draft-${entryKey}`;
   const [blocks, setBlocks] = useState<ContentBlock[]>(entry?.blocks ?? [createBlock("text")]);
+  const [activeStorageKey, setActiveStorageKey] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
   const form = useForm<FormValues>({ defaultValues: defaults(entry) });
   const values = form.watch();
 
   useEffect(() => {
+    setActiveStorageKey(null);
+    form.reset(defaults(entry));
+    setBlocks(entry?.blocks ?? [createBlock("text")]);
+    setMessage("");
+
     const saved = localStorage.getItem(storageKey);
-    if (!saved) return;
+    if (!saved) {
+      setActiveStorageKey(storageKey);
+      return;
+    }
     try {
       const parsed = JSON.parse(saved) as { values: FormValues; blocks: ContentBlock[] };
       form.reset(parsed.values);
       setBlocks(parsed.blocks);
     } catch {
       localStorage.removeItem(storageKey);
+    } finally {
+      setActiveStorageKey(storageKey);
     }
-  }, [form, storageKey]);
+  }, [entry, entryKey, form, storageKey]);
 
   useEffect(() => {
+    if (activeStorageKey !== storageKey) return;
     localStorage.setItem(storageKey, JSON.stringify({ values, blocks }));
-  }, [values, blocks, storageKey]);
+  }, [activeStorageKey, values, blocks, storageKey]);
 
   useEffect(() => {
     const handler = (event: BeforeUnloadEvent) => {

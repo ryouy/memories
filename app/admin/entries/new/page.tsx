@@ -4,7 +4,7 @@ import { EntryForm } from "@/components/admin/entry-form";
 export default function NewEntryPage() {
   return (
     <AdminShell>
-      <EntryForm />
+      <EntryForm key="new" />
     </AdminShell>
   );
 }
