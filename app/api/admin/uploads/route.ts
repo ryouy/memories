@@ -34,8 +34,8 @@ export async function POST(request: Request) {
       });
     }
     return ok({ images });
-  } catch {
-    return fail("UPLOAD_FAILED", "画像アップロードに失敗しました。", 500);
+  } catch (error) {
+    return fail("UPLOAD_FAILED", uploadMessage(error), uploadStatus(error));
   }
 }
 
@@ -43,4 +43,21 @@ export async function DELETE() {
   const unauthorized = await requireApiSession();
   if (unauthorized) return unauthorized;
   return ok({ deleted: true });
+}
+
+function uploadStatus(error: unknown) {
+  const message = error instanceof Error ? error.message : "";
+  if (message.includes("GitHub 401") || message.includes("GitHub 403")) return 403;
+  if (message.includes("GitHub 409")) return 409;
+  if (message.includes("GitHub 422")) return 422;
+  return 500;
+}
+
+function uploadMessage(error: unknown) {
+  const message = error instanceof Error ? error.message : "";
+  if (message.includes("environment variables")) return "GitHub設定が不足しています。";
+  if (message.includes("GitHub 401") || message.includes("GitHub 403")) return "GitHubへの書き込み権限を確認してください。";
+  if (message.includes("GitHub 409")) return "GitHub上のデータが更新されています。もう一度アップロードしてください。";
+  if (message.includes("GitHub 422")) return "画像の保存先に問題があります。";
+  return "画像アップロードに失敗しました。";
 }

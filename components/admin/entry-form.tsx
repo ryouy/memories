@@ -78,6 +78,14 @@ function defaults(entry?: Entry): FormValues {
 
 export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
   const router = useRouter();
+  const [draftIdentity] = useState(() => {
+    const now = new Date().toISOString();
+    return {
+      id: crypto.randomUUID(),
+      createdAt: now,
+      slug: `entry-${Date.now()}`
+    };
+  });
   const entryKey = entry?.slug ?? "new";
   const storageKey = `memories-entry-draft-${entryKey}`;
   const [blocks, setBlocks] = useState<ContentBlock[]>(entry?.blocks ?? [createBlock("text")]);
@@ -124,16 +132,17 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
 
   const entryPayload = useMemo<Entry>(() => {
     const now = new Date().toISOString();
-    const slug = values.slug || slugify(values.title);
+    const titleSlug = values.title ? slugify(values.title) : "";
+    const slug = values.slug || titleSlug || draftIdentity.slug;
     return {
       schemaVersion: 1,
-      id: entry?.id ?? crypto.randomUUID(),
+      id: entry?.id ?? draftIdentity.id,
       slug,
       title: values.title,
       summary: values.summary,
       status: values.status,
       visitedAt: values.visitedAt,
-      createdAt: entry?.createdAt ?? now,
+      createdAt: entry?.createdAt ?? draftIdentity.createdAt,
       updatedAt: now,
       tags: values.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
       location: {
@@ -146,7 +155,7 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
         : undefined,
       blocks
     };
-  }, [blocks, entry?.createdAt, entry?.id, values]);
+  }, [blocks, draftIdentity.createdAt, draftIdentity.id, draftIdentity.slug, entry?.createdAt, entry?.id, values]);
 
   async function save(status: EntryStatus) {
     setPending(true);
