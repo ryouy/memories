@@ -1,12 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function AdminQuickLogin({ target = "/admin", label = "管理" }: { target?: string; label?: string }) {
   const router = useRouter();
   const [pin, setPin] = useState("");
   const [pending, setPending] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/admin/session")
+      .then((response) => response.json())
+      .then((result) => {
+        if (active) setAuthenticated(Boolean(result?.data?.authenticated));
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function login() {
     if (pending) return;
@@ -27,18 +41,20 @@ export function AdminQuickLogin({ target = "/admin", label = "管理" }: { targe
 
   return (
     <div className="flex items-center gap-2">
-      <input
-        value={pin}
-        onChange={(event) => setPin(event.target.value.replace(/\D/g, "").slice(0, 4))}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") void login();
-        }}
-        inputMode="numeric"
-        pattern="\d{4}"
-        maxLength={4}
-        aria-label="PIN"
-        className="h-9 w-20 rounded-md border border-stone-300 bg-white px-2 text-center text-sm"
-      />
+      {authenticated ? null : (
+        <input
+          value={pin}
+          onChange={(event) => setPin(event.target.value.replace(/\D/g, "").slice(0, 4))}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") void login();
+          }}
+          inputMode="numeric"
+          pattern="\d{4}"
+          maxLength={4}
+          aria-label="PIN"
+          className="h-9 w-20 rounded-md border border-stone-300 bg-white px-2 text-center text-sm"
+        />
+      )}
       <button
         type="button"
         onClick={login}

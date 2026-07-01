@@ -9,7 +9,6 @@ export default async function EditEntryPage({ params }: { params: Promise<{ slug
   if (!entry) notFound();
   return (
     <AdminShell>
-      <h1 className="mb-6 font-serif text-4xl">編集</h1>
       <EntryForm entry={entry} />
     </AdminShell>
   );

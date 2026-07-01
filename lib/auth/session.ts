@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
 export const sessionCookieName = "memories_admin";
-const maxAgeSeconds = 60 * 60 * 8;
+const maxAgeSeconds = 60 * 60 * 24 * 30;
 
 function secret() {
   const value = process.env.SESSION_SECRET;

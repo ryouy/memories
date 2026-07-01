@@ -148,7 +148,7 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
     if (response.ok) {
       localStorage.removeItem(storageKey);
       setMessage("保存しました。");
-      router.push("/admin/entries");
+      router.push(`/entries/${payload.slug}`);
       router.refresh();
     } else {
       const result = await response.json().catch(() => null);
@@ -281,7 +281,7 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
 }) {
   return (
     <article className="relative py-2">
-      <div className="absolute -left-16 top-3 hidden w-14 flex-col items-end gap-1 opacity-0 transition group-hover:opacity-100 md:flex">
+      <div className="mb-1 flex gap-2 text-xs text-stone-400 opacity-60 md:absolute md:-left-16 md:top-3 md:mb-0 md:w-14 md:flex-col md:items-end md:gap-1 md:opacity-0 md:transition md:group-hover:opacity-100">
         <span className="text-[11px] text-stone-400">{blockLabel(block.type)}</span>
         <div className="flex gap-1">
           <button type="button" className="text-xs text-stone-400 hover:text-stone-900" onClick={() => onMove(index, -1)}>↑</button>
