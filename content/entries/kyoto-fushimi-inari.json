@@ -7,7 +7,7 @@
   "status": "published",
   "visitedAt": "2026-04-10",
   "createdAt": "2026-04-15T09:00:00+09:00",
-  "updatedAt": "2026-06-30T03:34:34.529Z",
+  "updatedAt": "2026-07-01T12:03:27.072Z",
   "tags": [
     "京都",
     "神社",
@@ -55,6 +55,11 @@
     {
       "id": "block-003",
       "type": "divider"
+    },
+    {
+      "id": "block-bc9b55ba-5e6b-474e-aaad-d565fc841034",
+      "type": "text",
+      "content": "haine"
     },
     {
       "id": "block-004",
