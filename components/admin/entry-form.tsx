@@ -86,7 +86,7 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
       slug: `entry-${Date.now()}`
     };
   });
-  const entryKey = entry?.slug ?? "new";
+  const entryKey = entry?.slug ?? `new-${draftIdentity.id}`;
   const storageKey = `memories-entry-draft-${entryKey}`;
   const [blocks, setBlocks] = useState<ContentBlock[]>(entry?.blocks ?? [createBlock("text")]);
   const [activeStorageKey, setActiveStorageKey] = useState<string | null>(null);
@@ -101,6 +101,7 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
     setBlocks(entry?.blocks ?? [createBlock("text")]);
     setMessage("");
 
+    if (!entry) localStorage.removeItem("memories-entry-draft-new");
     const saved = localStorage.getItem(storageKey);
     if (!saved) {
       setActiveStorageKey(storageKey);
