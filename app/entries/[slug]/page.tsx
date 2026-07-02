@@ -30,7 +30,7 @@ export default async function EntryPage({ params }: { params: Promise<{ slug: st
             <time dateTime={entry.visitedAt}>{entry.visitedAt}</time>
             {entry.location?.name ? ` / ${entry.location.name}` : ""}
           </p>
-          <h1 className="mt-4 font-serif text-5xl leading-tight sm:text-6xl">{entry.title}</h1>
+          <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">{entry.title}</h1>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             {entry.tags.map((tag) => (
               <Link key={tag} href={`/?tag=${encodeURIComponent(tag)}`} className="rounded-full bg-white px-3 py-1 text-sm text-stone-600">

@@ -43,14 +43,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ slug
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ slug: string }> }) {
+export async function DELETE(_: Request, { params }: { params: Promise<{ slug: string }> }) {
   const unauthorized = await requireApiSession();
   if (unauthorized) return unauthorized;
   const { slug } = await params;
-  const body = await request.json().catch(() => null);
   try {
     const current = await getEntryFromGitHub(slug);
-    if (body?.title !== current.entry.title) return fail("DELETE_CONFIRM_FAILED", "削除確認のタイトルが一致しません。", 422);
     await deleteEntryFromGitHub(slug, current.sha);
     revalidatePath("/");
     revalidatePath(`/entries/${slug}`);

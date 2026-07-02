@@ -60,7 +60,7 @@ function defaults(entry?: Entry): FormValues {
     slug: entry?.slug ?? "",
     summary: entry?.summary ?? "",
     visitedAt: entry?.visitedAt ?? new Date().toISOString().slice(0, 10),
-    status: entry?.status ?? "draft",
+    status: entry?.status ?? "published",
     locationName: entry?.location?.name ?? "",
     locationAddress: entry?.location?.address ?? "",
     locationGoogleMapsUrl: entry?.location?.googleMapsUrl ?? "",
@@ -72,7 +72,11 @@ function defaults(entry?: Entry): FormValues {
   };
 }
 
-export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
+function splitTags(value: string) {
+  return value.split(",").map((tag) => tag.trim()).filter(Boolean);
+}
+
+export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sha?: string; existingTags?: string[] }) {
   const router = useRouter();
   const [draftIdentity] = useState(() => {
     const now = new Date().toISOString();
@@ -154,6 +158,13 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
     };
   }, [blocks, draftIdentity.createdAt, draftIdentity.id, draftIdentity.slug, entry?.createdAt, entry?.id, values]);
 
+  const selectedTags = splitTags(values.tags);
+
+  function addTag(tag: string) {
+    if (selectedTags.includes(tag)) return;
+    form.setValue("tags", [...selectedTags, tag].join(", "), { shouldDirty: true });
+  }
+
   async function save(status: EntryStatus) {
     setPending(true);
     setMessage("");
@@ -204,7 +215,7 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
     <form className="mx-auto max-w-[880px] space-y-8 bg-white" onSubmit={(event) => event.preventDefault()}>
       <section className="space-y-5 px-2 pt-6">
         <input
-          className="w-full border-0 bg-transparent font-serif text-5xl leading-tight outline-none placeholder:text-stone-300 sm:text-6xl"
+          className="w-full border-0 bg-transparent text-4xl font-semibold leading-tight outline-none placeholder:text-stone-300 sm:text-5xl"
           placeholder="タイトル"
           {...form.register("title", { required: true })}
           onBlur={(event) => {
@@ -219,12 +230,33 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
         <div className="flex flex-wrap gap-3 text-sm text-stone-500">
           <input type="date" className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("visitedAt")} />
           <input className="min-w-48 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="slug" {...form.register("slug", { required: true })} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title), { shouldDirty: true })} />
-          <input className="min-w-64 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="タグ" {...form.register("tags")} />
+          <input className="min-w-64 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="タグ" list="existing-tags" {...form.register("tags")} />
+          <datalist id="existing-tags">
+            {existingTags.map((tag) => <option key={tag} value={tag} />)}
+          </datalist>
           <select className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("status")}>
-            <option value="draft">下書き</option>
             <option value="published">公開</option>
+            <option value="draft">下書き</option>
           </select>
         </div>
+        {existingTags.length > 0 ? (
+          <div className="flex flex-wrap gap-2 text-sm">
+            {existingTags.map((tag) => {
+              const selected = selectedTags.includes(tag);
+              return (
+                <button
+                  key={tag}
+                  type="button"
+                  className={`rounded-full border px-3 py-1 ${selected ? "border-stone-200 text-stone-300" : "border-stone-300 text-stone-600 hover:border-stone-500"}`}
+                  onClick={() => addTag(tag)}
+                  disabled={selected}
+                >
+                  {tag}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
         <details className="border-t border-stone-100 pt-3">
           <summary className="cursor-pointer text-sm text-stone-500">カバー写真</summary>
           <div className="mt-4">
@@ -373,15 +405,20 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
         </div>
       ) : null}
       {block.type === "map" ? (
-        <label className="block rounded-lg border border-stone-200 p-4 text-sm">
-          <span className="text-stone-500">地図</span>
+        <div className="space-y-3 rounded-lg border border-stone-200 p-4 text-sm">
           <input
-            className="mt-2 w-full border-0 bg-transparent p-0 text-base outline-none placeholder:text-stone-300"
+            className="w-full border-0 bg-transparent p-0 text-base outline-none placeholder:text-stone-300"
+            placeholder="地図の表示名"
+            value={block.title ?? ""}
+            onChange={(event) => onChange({ ...block, title: event.target.value })}
+          />
+          <input
+            className="w-full border-0 bg-transparent p-0 text-sm text-stone-500 outline-none placeholder:text-stone-300"
             placeholder="Google Maps URL"
             value={block.googleMapsUrl}
             onChange={(event) => onChange({ ...block, googleMapsUrl: event.target.value })}
           />
-        </label>
+        </div>
       ) : null}
       {block.type === "youtube" ? (
         <div className="space-y-2 rounded-lg border border-stone-200 p-4">

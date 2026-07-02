@@ -20,7 +20,7 @@ export function EntryCard({ entry }: { entry: Entry }) {
             <time dateTime={entry.visitedAt}>{entry.visitedAt}</time>
             {entry.location?.name ? <span>{entry.location.name}</span> : null}
           </div>
-          <h2 className="font-serif text-2xl leading-tight">{entry.title}</h2>
+          <h2 className="text-xl font-semibold leading-tight">{entry.title}</h2>
           <div className="flex flex-wrap gap-2 pt-1">
             {entry.tags.map((tag) => (
               <span key={tag} className="rounded-full bg-stone-100 px-3 py-1 text-xs text-stone-600">
