@@ -146,7 +146,7 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
       visitedAt: values.visitedAt,
       createdAt: entry?.createdAt ?? draftIdentity.createdAt,
       updatedAt: now,
-      tags: values.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+      tags: splitTags(values.tags),
       location: {
         name: values.locationName || undefined,
         address: values.locationAddress || undefined,
@@ -164,6 +164,10 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
   function addTag(tag: string) {
     if (selectedTags.includes(tag)) return;
     form.setValue("tags", [...selectedTags, tag].join(", "), { shouldDirty: true });
+  }
+
+  function removeTag(tag: string) {
+    form.setValue("tags", selectedTags.filter((item) => item !== tag).join(", "), { shouldDirty: true });
   }
 
   async function save(status: EntryStatus) {
@@ -193,16 +197,6 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
 
   function insertBlock(index: number, type: ContentBlock["type"]) {
     setBlocks((current) => [...current.slice(0, index), createBlock(type), ...current.slice(index)]);
-  }
-
-  function moveBlock(index: number, direction: -1 | 1) {
-    setBlocks((current) => {
-      const target = index + direction;
-      if (target < 0 || target >= current.length) return current;
-      const copy = [...current];
-      [copy[index], copy[target]] = [copy[target], copy[index]];
-      return copy;
-    });
   }
 
   function setCoverImage(image: ImageItem) {
@@ -258,6 +252,20 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
             })}
           </div>
         ) : null}
+        {selectedTags.length > 0 ? (
+          <div className="flex flex-wrap gap-2 text-sm">
+            {selectedTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                className="rounded-full bg-stone-100 px-3 py-1 text-stone-700 hover:bg-stone-200"
+                onClick={() => removeTag(tag)}
+              >
+                {tag} ×
+              </button>
+            ))}
+          </div>
+        ) : null}
         <details className="border-t border-stone-100 pt-3">
           <summary className="cursor-pointer text-sm text-stone-500">カバー写真</summary>
           <div className="mt-4">
@@ -294,11 +302,8 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
           <div key={block.id} className="group space-y-2">
             <BlockEditor
               block={block}
-              index={index}
               uploadSlug={entryPayload.slug}
               onChange={(next) => updateBlock(index, next)}
-              onMove={moveBlock}
-              onDuplicate={() => setBlocks((current) => [...current.slice(0, index + 1), { ...block, id: `block-${crypto.randomUUID()}` }, ...current.slice(index + 1)])}
               onDelete={() => setBlocks((current) => current.filter((_, i) => i !== index))}
             />
             <BlockInsert onAdd={(type) => insertBlock(index + 1, type)} />
@@ -354,21 +359,15 @@ function BlockInsert({ onAdd }: { onAdd: (type: ContentBlock["type"]) => void })
   );
 }
 
-function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, onDelete }: {
+function BlockEditor({ block, uploadSlug, onChange, onDelete }: {
   block: ContentBlock;
-  index: number;
   uploadSlug: string;
   onChange: (block: ContentBlock) => void;
-  onMove: (index: number, direction: -1 | 1) => void;
-  onDuplicate: () => void;
   onDelete: () => void;
 }) {
   return (
     <article className="group/block relative py-1">
       <div className="mb-1 flex gap-2 text-xs text-stone-300 opacity-100 sm:absolute sm:-left-20 sm:top-3 sm:mb-0 sm:w-16 sm:justify-end sm:opacity-0 sm:transition sm:group-hover/block:opacity-100 sm:group-focus-within/block:opacity-100">
-        <button type="button" className="hover:text-stone-900" aria-label="上へ" onClick={() => onMove(index, -1)}>↑</button>
-        <button type="button" className="hover:text-stone-900" aria-label="下へ" onClick={() => onMove(index, 1)}>↓</button>
-        <button type="button" className="hover:text-stone-900" aria-label="複製" onClick={onDuplicate}>複</button>
         <button type="button" className="hover:text-red-600" aria-label="削除" onClick={onDelete}>×</button>
       </div>
       {block.type === "text" ? (
@@ -593,6 +592,46 @@ function GalleryBatchUploader({ uploadSlug, onUploaded }: { uploadSlug: string; 
 function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; uploadSlug: string; onChange: (image: ImageItem) => void }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+
+  async function handleUpload(file: File) {
+    setUploading(true);
+    setUploadError("");
+    try {
+      const optimized = await optimizeImage(file);
+      if (optimized.dataUrl.length > 4_200_000) throw new Error("画像サイズが大きすぎます。");
+      const response = await fetch("/api/admin/uploads", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ slug: uploadSlug, files: [{ ...optimized, alt: image.alt || file.name }] })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error?.message ?? "アップロードに失敗しました。");
+      onChange(result.data.images[0]);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : "アップロードに失敗しました。");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  const uploadInput = (
+    <label className="block rounded-lg border border-dashed border-stone-200 p-4 text-sm text-stone-500">
+      写真
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp,.heic"
+        className="mt-2 block w-full rounded-md border border-stone-200 bg-white p-3"
+        disabled={uploading || !uploadSlug}
+        onChange={async (event) => {
+          const file = event.target.files?.[0];
+          if (!file) return;
+          await handleUpload(file);
+          event.target.value = "";
+        }}
+      />
+    </label>
+  );
+
   return (
     <div className="space-y-3">
       {image.src ? (
@@ -607,43 +646,13 @@ function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; upload
           </div>
         </figure>
       ) : null}
-      <label className="block rounded-lg border border-dashed border-stone-200 p-4 text-sm text-stone-500">
-        写真
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp,.heic"
-          className="mt-2 block w-full rounded-md border border-stone-200 bg-white p-3"
-          disabled={uploading || !uploadSlug}
-          onChange={async (event) => {
-            const file = event.target.files?.[0];
-            if (!file) return;
-            setUploading(true);
-            setUploadError("");
-            try {
-              const optimized = await optimizeImage(file);
-              if (optimized.dataUrl.length > 4_200_000) throw new Error("画像サイズが大きすぎます。");
-              const response = await fetch("/api/admin/uploads", {
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({ slug: uploadSlug, files: [{ ...optimized, alt: image.alt || file.name }] })
-              });
-              const result = await response.json();
-              if (!response.ok) throw new Error(result?.error?.message ?? "アップロードに失敗しました。");
-              onChange(result.data.images[0]);
-            } catch (error) {
-              setUploadError(error instanceof Error ? error.message : "アップロードに失敗しました。");
-            } finally {
-              setUploading(false);
-              event.target.value = "";
-            }
-          }}
-        />
-      </label>
+      {image.src ? null : uploadInput}
       {uploading ? <p className="text-sm text-stone-500">アップロード中...</p> : null}
       {uploadError ? <p className="text-sm text-red-700">{uploadError}</p> : null}
       <details>
-        <summary className="cursor-pointer text-sm text-stone-500">詳細</summary>
+        <summary className="cursor-pointer text-sm text-stone-500">{image.src ? "写真を変更・詳細" : "詳細"}</summary>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {image.src ? <div className="sm:col-span-2">{uploadInput}</div> : null}
           <input className="rounded-md border border-stone-300 p-3 sm:col-span-2" placeholder="/uploads/slug/photo.webp" value={image.src} onChange={(event) => onChange({ ...image, src: event.target.value })} />
           <input className="rounded-md border border-stone-300 p-3" placeholder="alt" value={image.alt} onChange={(event) => onChange({ ...image, alt: event.target.value })} />
           <input className="rounded-md border border-stone-300 p-3" placeholder="caption" value={image.caption ?? ""} onChange={(event) => onChange({ ...image, caption: event.target.value })} />
