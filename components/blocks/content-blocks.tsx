@@ -2,6 +2,7 @@ import type { ContentBlock, ImageItem } from "@/types/content";
 import { renderMarkdown } from "@/lib/markdown";
 import { getGoogleMapsTitle, toGoogleMapsEmbedUrl, toGoogleMapsUrl } from "@/lib/maps";
 import { youtubeEmbedUrl } from "@/lib/youtube";
+import { MapCard } from "@/components/blocks/map-card";
 
 function Caption({ image }: { image: ImageItem }) {
   return image.caption ? <figcaption className="mt-2 text-sm text-stone-500">{image.caption}</figcaption> : null;
@@ -80,17 +81,7 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
                     />
                   </div>
                 ) : (
-                  <a href={mapUrl} target="_blank" rel="noreferrer" className="grid overflow-hidden rounded-lg border border-stone-200 bg-white sm:grid-cols-[220px_1fr]">
-                    {block.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={block.image.src} alt={block.image.alt} className="aspect-[4/3] h-full w-full object-cover" loading="lazy" />
-                    ) : null}
-                    <span className="flex min-h-28 flex-col justify-center p-5">
-                      <span className="block text-sm text-stone-500">Google Maps</span>
-                      <span className="mt-2 block text-xl font-semibold">{title}</span>
-                      <span className="mt-2 block text-sm text-stone-500">{displayMode === "embed" ? "埋め込み用URLを確認してください" : "地図を開く"}</span>
-                    </span>
-                  </a>
+                  <MapCard mapUrl={mapUrl} title={title} fallbackImage={block.image} />
                 )
               ) : null}
             </section>

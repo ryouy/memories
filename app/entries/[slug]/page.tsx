@@ -31,13 +31,16 @@ export default async function EntryPage({ params }: { params: Promise<{ slug: st
             {entry.location?.name ? ` / ${entry.location.name}` : ""}
           </p>
           <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">{entry.title}</h1>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {entry.tags.map((tag) => (
-              <Link key={tag} href={`/?tag=${encodeURIComponent(tag)}`} className="rounded-full bg-white px-3 py-1 text-sm text-stone-600">
-                {tag}
-              </Link>
-            ))}
-          </div>
+          {entry.tags.length > 0 ? (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+              <span className="text-xs font-medium text-stone-500">タグ</span>
+              {entry.tags.map((tag) => (
+                <Link key={tag} href={`/?tag=${encodeURIComponent(tag)}`} className="rounded-full border border-stone-200 bg-white px-3 py-1 text-sm text-stone-600">
+                  #{tag}
+                </Link>
+              ))}
+            </div>
+          ) : null}
         </header>
         <ContentBlocks blocks={entry.blocks} />
       </main>

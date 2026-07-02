@@ -420,12 +420,6 @@ function BlockEditor({ block, uploadSlug, onChange, onDelete }: {
           </div>
           <input
             className="w-full border-0 bg-transparent p-0 text-base outline-none placeholder:text-stone-300"
-            placeholder="地図の表示名"
-            value={block.title ?? ""}
-            onChange={(event) => onChange({ ...block, title: event.target.value })}
-          />
-          <input
-            className="w-full border-0 bg-transparent p-0 text-sm text-stone-500 outline-none placeholder:text-stone-300"
             placeholder="Google Maps URL"
             value={block.googleMapsUrl}
             onChange={(event) => {
@@ -433,20 +427,6 @@ function BlockEditor({ block, uploadSlug, onChange, onDelete }: {
               onChange({ ...block, googleMapsUrl, title: block.title || getGoogleMapsTitle(googleMapsUrl) });
             }}
           />
-          {(block.displayMode ?? "card") === "card" ? (
-            <details>
-              <summary className="cursor-pointer text-stone-500">写真</summary>
-              <div className="mt-3">
-                <ImageFields
-                  uploadSlug={uploadSlug}
-                  image={block.image ?? { ...emptyImage }}
-                  onChange={(image) => onChange({ ...block, image })}
-                />
-              </div>
-            </details>
-          ) : (
-            <p className="text-xs text-stone-500">Google Mapsの「地図を埋め込む」で取得したURLを貼ってください。</p>
-          )}
         </div>
       ) : null}
       {block.type === "youtube" ? (
