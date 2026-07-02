@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { entrySchema } from "@/lib/validation/content";
 import { slugify } from "@/lib/utils/slug";
 import { parseYouTubeUrl } from "@/lib/youtube";
-import { isAllowedGoogleMapsUrl } from "@/lib/maps";
+import { getGoogleMapsTitle, isAllowedGoogleMapsUrl } from "@/lib/maps";
 import { createUploadFilename } from "@/lib/images/filenames";
 
 describe("content utilities", () => {
@@ -35,7 +35,12 @@ describe("content utilities", () => {
 
   it("allows only Google Maps URLs", () => {
     expect(isAllowedGoogleMapsUrl("https://www.google.com/maps/place/Test")).toBe(true);
+    expect(isAllowedGoogleMapsUrl("google.com/maps/place/%E3%83%A8%E3%83%BC%E3%82%AF%E3%83%99%E3%83%8B%E3%83%9E%E3%83%AB%E4%B8%80%E7%AE%95%E7%94%BA%E5%BA%97/@37.5149342,139.9365413,16z/data=!4m6!3m5!1s0x5f8aacb0bb754807:0x2a1ba756f6de45ba!8m2!3d37.5149341!4d139.9416897!16s%2Fg%2F11xt1f02pw?entry=ttu")).toBe(true);
     expect(isAllowedGoogleMapsUrl("https://example.com/maps")).toBe(false);
+  });
+
+  it("extracts Google Maps place names", () => {
+    expect(getGoogleMapsTitle("google.com/maps/place/%E3%83%A8%E3%83%BC%E3%82%AF%E3%83%99%E3%83%8B%E3%83%9E%E3%83%AB%E4%B8%80%E7%AE%95%E7%94%BA%E5%BA%97/@37.5149342,139.9365413,16z/data=!4m6!3m5!1s0x5f8aacb0bb754807:0x2a1ba756f6de45ba!8m2!3d37.5149341!4d139.9416897!16s%2Fg%2F11xt1f02pw?entry=ttu")).toBe("ヨークベニマル一箕町店");
   });
 
   it("creates normalized upload filenames", () => {
