@@ -14,7 +14,7 @@ export async function AdminShell({ children }: { children: React.ReactNode }) {
             管理
           </Link>
           <nav className="flex items-center gap-3 text-sm text-stone-500">
-            <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-white shadow-sm transition hover:bg-stone-700" aria-label="ホーム">
+            <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-stone-800 shadow-sm transition hover:bg-stone-100" aria-label="ホーム">
               <House size={16} strokeWidth={1.8} />
             </Link>
             <Link href="/admin/entries">一覧</Link>
