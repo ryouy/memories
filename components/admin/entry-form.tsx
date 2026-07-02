@@ -483,7 +483,7 @@ function BlockEditor({ block, uploadSlug, onChange, onDelete }: {
               onChange({ ...block, images: [...existing, ...images] });
             }}
           />
-          <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={() => onChange({ ...block, images: [...block.images, { ...emptyImage }] })}>手入力</button>
+          <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={() => onChange({ ...block, images: [...block.images, { ...emptyImage }] })}>写真を追加</button>
         </div>
       ) : null}
       {block.type === "map" ? (
