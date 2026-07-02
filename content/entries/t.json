@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "82e7c8cf-05c9-4b5c-a0a9-ea400915e7e6",
+  "slug": "t",
+  "title": "t",
+  "summary": "",
+  "status": "published",
+  "visitedAt": "2026-07-02",
+  "createdAt": "2026-07-02T08:29:53.566Z",
+  "updatedAt": "2026-07-02T08:30:48.017Z",
+  "tags": [],
+  "location": {},
+  "blocks": [
+    {
+      "id": "block-409bd209-bfdd-4c8c-a819-2010d61c714a",
+      "type": "text",
+      "content": ""
+    },
+    {
+      "id": "block-33b7cc08-2434-4f61-94e7-f4311d62625b",
+      "type": "map",
+      "title": "",
+      "googleMapsUrl": "https://www.google.com/maps/place/%E3%83%A8%E3%83%BC%E3%82%AF%E3%83%99%E3%83%8B%E3%83%9E%E3%83%AB%E4%B8%80%E7%AE%95%E7%94%BA%E5%BA%97/@37.5149342,139.9365413,16z/data=!4m6!3m5!1s0x5f8aacb0bb754807:0x2a1ba756f6de45ba!8m2!3d37.5149341!4d139.9416897!16s%2Fg%2F11xt1f02pw?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D"
+    }
+  ]
+}
