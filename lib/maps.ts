@@ -15,3 +15,23 @@ export function toGoogleMapsEmbedUrl(input: string) {
   if (url.pathname.startsWith("/maps/embed")) return url.toString();
   return null;
 }
+
+export function getGoogleMapsTitle(input: string) {
+  try {
+    const url = new URL(input);
+    const queryTitle = url.searchParams.get("q") || url.searchParams.get("query");
+    if (queryTitle) return cleanMapsTitle(queryTitle);
+
+    const parts = url.pathname.split("/").filter(Boolean);
+    const placeIndex = parts.findIndex((part) => part === "place" || part === "search");
+    const pathTitle = placeIndex >= 0 ? parts[placeIndex + 1] : "";
+    if (pathTitle) return cleanMapsTitle(pathTitle);
+  } catch {
+    return "";
+  }
+  return "";
+}
+
+function cleanMapsTitle(value: string) {
+  return decodeURIComponent(value.replace(/\+/g, " ")).replace(/\s+/g, " ").trim();
+}

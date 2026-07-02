@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import type { ContentBlock, Entry, EntryStatus, ImageItem } from "@/types/content";
+import { getGoogleMapsTitle } from "@/lib/maps";
 import { parseYouTubeUrl } from "@/lib/youtube";
 import { slugify } from "@/lib/utils/slug";
 
@@ -229,7 +230,7 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
         />
         <div className="flex flex-wrap gap-3 text-sm text-stone-500">
           <input type="date" className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("visitedAt")} />
-          <input className="min-w-48 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="slug" {...form.register("slug", { required: true })} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title), { shouldDirty: true })} />
+          <input className="min-w-48 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="URL" {...form.register("slug", { required: true })} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title), { shouldDirty: true })} />
           <input className="min-w-64 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="タグ" list="existing-tags" {...form.register("tags")} />
           <datalist id="existing-tags">
             {existingTags.map((tag) => <option key={tag} value={tag} />)}
@@ -416,7 +417,10 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
             className="w-full border-0 bg-transparent p-0 text-sm text-stone-500 outline-none placeholder:text-stone-300"
             placeholder="Google Maps URL"
             value={block.googleMapsUrl}
-            onChange={(event) => onChange({ ...block, googleMapsUrl: event.target.value })}
+            onChange={(event) => {
+              const googleMapsUrl = event.target.value;
+              onChange({ ...block, googleMapsUrl, title: block.title || getGoogleMapsTitle(googleMapsUrl) });
+            }}
           />
         </div>
       ) : null}

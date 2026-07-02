@@ -1,6 +1,6 @@
 import type { ContentBlock, ImageItem } from "@/types/content";
 import { renderMarkdown } from "@/lib/markdown";
-import { isAllowedGoogleMapsUrl, toGoogleMapsEmbedUrl } from "@/lib/maps";
+import { getGoogleMapsTitle, isAllowedGoogleMapsUrl, toGoogleMapsEmbedUrl } from "@/lib/maps";
 import { youtubeEmbedUrl } from "@/lib/youtube";
 
 function Caption({ image }: { image: ImageItem }) {
@@ -16,20 +16,6 @@ function ImageFigure({ image, className = "" }: { image: ImageItem; className?: 
       </a>
       <Caption image={image} />
     </figure>
-  );
-}
-
-function MapPreview({ title }: { title: string }) {
-  return (
-    <span className="relative block aspect-[4/3] overflow-hidden bg-stone-100">
-      <span className="absolute inset-0 opacity-70 [background-image:linear-gradient(90deg,rgba(120,113,108,.18)_1px,transparent_1px),linear-gradient(rgba(120,113,108,.18)_1px,transparent_1px)] [background-size:28px_28px]" />
-      <span className="absolute left-8 top-8 h-16 w-28 rounded-full border-8 border-white/70 bg-stone-200" />
-      <span className="absolute bottom-8 right-8 h-20 w-32 rounded-full border-8 border-white/70 bg-stone-200" />
-      <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-sm text-white shadow-sm">
-        ●
-      </span>
-      <span className="sr-only">{title}</span>
-    </span>
   );
 }
 
@@ -77,28 +63,27 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
 
         if (block.type === "map") {
           const embed = toGoogleMapsEmbedUrl(block.googleMapsUrl);
-          const title = block.title || "地図";
+          const title = block.title || getGoogleMapsTitle(block.googleMapsUrl) || "Google Maps";
           return (
             <section key={block.id} className="mx-auto max-w-[760px]">
               {isAllowedGoogleMapsUrl(block.googleMapsUrl) ? (
-                <a href={block.googleMapsUrl} target="_blank" rel="noreferrer" className="grid overflow-hidden rounded-lg border border-stone-200 bg-white sm:grid-cols-[220px_1fr]">
-                  {embed ? (
+                embed ? (
+                  <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
                     <iframe
                       src={embed}
                       title={title}
-                      className="pointer-events-none aspect-[4/3] w-full border-0 sm:h-full"
+                      className="aspect-[4/3] w-full border-0"
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                     />
-                  ) : (
-                    <MapPreview title={title} />
-                  )}
-                  <span className="flex min-h-24 flex-col justify-center gap-1 p-4">
-                    <span className="text-sm text-stone-500">Google Maps</span>
-                    <span className="font-medium">{title}</span>
-                    <span className="text-sm text-stone-500">クリックして地図を開く</span>
-                  </span>
-                </a>
+                  </div>
+                ) : (
+                  <a href={block.googleMapsUrl} target="_blank" rel="noreferrer" className="block rounded-lg border border-stone-200 bg-white p-5">
+                    <span className="block text-sm text-stone-500">Google Maps</span>
+                    <span className="mt-2 block text-xl font-semibold">{title}</span>
+                    <span className="mt-2 block text-sm text-stone-500">地図を開く</span>
+                  </a>
+                )
               ) : null}
             </section>
           );

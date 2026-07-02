@@ -6,9 +6,10 @@ import { collectTags, collectYears, getPublishedEntries, getSiteSettings } from 
 export default async function HomePage({
   searchParams
 }: {
-  searchParams: Promise<{ tag?: string; year?: string }>;
+  searchParams: Promise<{ tag?: string; year?: string; view?: string }>;
 }) {
   const params = await searchParams;
+  const view = params.view === "list" ? "list" : "tile";
   const settings = await getSiteSettings();
   const allEntries = await getPublishedEntries();
   const tags = collectTags(allEntries);
@@ -23,12 +24,12 @@ export default async function HomePage({
     <SiteShell settings={settings}>
       <main className="mx-auto max-w-[1360px] px-5 pb-16 sm:px-8 lg:px-10">
         <section className="pb-8">
-          <HomeFilters tags={tags} years={years} selectedTag={params.tag} selectedYear={params.year} />
+          <HomeFilters tags={tags} years={years} selectedTag={params.tag} selectedYear={params.year} selectedView={view} />
         </section>
         <section>
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className={view === "list" ? "mx-auto max-w-[860px]" : "grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"}>
             {entries.map((entry) => (
-              <EntryCard key={entry.id} entry={entry} />
+              <EntryCard key={entry.id} entry={entry} variant={view} />
             ))}
           </div>
         </section>
