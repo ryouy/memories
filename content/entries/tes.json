@@ -7,11 +7,16 @@
   "status": "published",
   "visitedAt": "2026-07-02",
   "createdAt": "2026-07-02T07:50:08.742Z",
-  "updatedAt": "2026-07-02T07:52:10.780Z",
-  "tags": [
-    "none"
-  ],
+  "updatedAt": "2026-07-02T08:12:50.196Z",
+  "tags": [],
   "location": {},
+  "coverImage": {
+    "src": "/uploads/tes/20260702T081220-0aaa3d.webp",
+    "alt": "test",
+    "caption": "",
+    "width": 1920,
+    "height": 947
+  },
   "blocks": [
     {
       "id": "block-099bfe42-2844-446c-aa3f-68ad703e2384",
@@ -34,6 +39,12 @@
       "id": "block-cb0e88b6-a24a-4d0e-8eb3-79d8f8fcc88c",
       "type": "text",
       "content": ""
+    },
+    {
+      "id": "block-0e748d6e-309d-4f15-ab43-e8ef50a09506",
+      "type": "youtube",
+      "videoId": "KLuTLF3x9sA",
+      "title": "ノルウェイ"
     },
     {
       "id": "block-d05a696d-2fb2-4618-a441-abf99da03618",
