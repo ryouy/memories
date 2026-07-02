@@ -7,7 +7,7 @@
   "status": "published",
   "visitedAt": "2025-02-04",
   "createdAt": "2026-07-02T12:40:29.542Z",
-  "updatedAt": "2026-07-02T13:13:25.703Z",
+  "updatedAt": "2026-07-02T13:16:18.307Z",
   "tags": [
     "アイスランド",
     "冬"
@@ -37,6 +37,34 @@
       "displayMode": "embed",
       "title": "Tsurukamehiroba Park",
       "googleMapsUrl": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26561.34451709602!2d137.89096973044926!3d36.300254337374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x601d6d388b7521ab%3A0xa598623fac1e6ade!2sToyoshina%20Station!5e1!3m2!1sen!2sjp!4v1782997256822!5m2!1sen!2sjp\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\"></iframe>"
+    },
+    {
+      "id": "block-f7caa838-7281-406b-95cb-8f4d4906d2c6",
+      "type": "imageGallery",
+      "layout": "grid",
+      "images": [
+        {
+          "src": "/uploads/iceland-1/20260702T131542-a40b40.webp",
+          "alt": "IMG_9837.JPG",
+          "caption": "",
+          "width": 1920,
+          "height": 947
+        },
+        {
+          "src": "/uploads/iceland-1/20260702T131547-7e2c10.webp",
+          "alt": "IMG_9837.JPG",
+          "caption": "",
+          "width": 1920,
+          "height": 947
+        },
+        {
+          "src": "/uploads/iceland-1/20260702T131617-f1d957.webp",
+          "alt": "img1-3.jpg",
+          "caption": "",
+          "width": 1100,
+          "height": 723
+        }
+      ]
     },
     {
       "id": "block-7817c5e3-f8a0-4506-af2e-9698b00843f4",
