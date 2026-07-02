@@ -21,7 +21,12 @@ export const getAllEntries = cache(async (): Promise<Entry[]> => {
         .filter((file) => file.endsWith(".json"))
         .map(async (file) => entrySchema.parse(await readJson(path.join(entriesDir, file))))
     );
-    return entries.sort((a, b) => b.visitedAt.localeCompare(a.visitedAt));
+    const latestBySlug = new Map<string, Entry>();
+    for (const entry of entries) {
+      const existing = latestBySlug.get(entry.slug);
+      if (!existing || entry.updatedAt.localeCompare(existing.updatedAt) > 0) latestBySlug.set(entry.slug, entry);
+    }
+    return [...latestBySlug.values()].sort((a, b) => b.visitedAt.localeCompare(a.visitedAt));
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
     throw error;

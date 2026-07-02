@@ -64,19 +64,25 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
         if (block.type === "map") {
           const embed = toGoogleMapsEmbedUrl(block.googleMapsUrl);
           return (
-            <section key={block.id} className="mx-auto max-w-[960px]">
-              {block.title ? <h2 className="mb-3 font-serif text-2xl">{block.title}</h2> : null}
+            <section key={block.id} className="mx-auto max-w-[760px]">
               {embed ? (
-                <iframe
-                  src={embed}
-                  title={block.title ?? "Google Maps"}
-                  className="aspect-[16/9] w-full rounded-lg border-0"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+                <a href={block.googleMapsUrl} target="_blank" rel="noreferrer" className="grid overflow-hidden rounded-lg border border-stone-200 bg-white sm:grid-cols-[220px_1fr]">
+                  <iframe
+                    src={embed}
+                    title={block.title ?? "Google Maps"}
+                    className="pointer-events-none aspect-[4/3] w-full border-0 sm:h-full"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                  <span className="flex min-h-24 flex-col justify-center gap-1 p-4">
+                    <span className="text-sm text-stone-500">Google Maps</span>
+                    <span className="font-medium">{block.title || "地図"}</span>
+                  </span>
+                </a>
               ) : isAllowedGoogleMapsUrl(block.googleMapsUrl) ? (
-                <a className="inline-flex rounded-md bg-ink px-4 py-3 text-sm text-white" href={block.googleMapsUrl} target="_blank" rel="noreferrer">
-                  地図を開く
+                <a className="block rounded-lg border border-stone-200 bg-white p-4" href={block.googleMapsUrl} target="_blank" rel="noreferrer">
+                  <span className="block text-sm text-stone-500">Google Maps</span>
+                  <span className="mt-1 block font-medium">{block.title || "地図"}</span>
                 </a>
               ) : null}
             </section>

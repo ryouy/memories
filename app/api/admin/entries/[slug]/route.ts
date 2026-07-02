@@ -28,7 +28,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ slug
     if (body?.sha && body.sha !== current.sha) {
       return fail("GITHUB_CONFLICT", "この記録は別の場所で更新されています。最新データを取得してから再度編集してください。", 409);
     }
-    await putEntryToGitHub(parsed.data, current.sha);
+    if (parsed.data.slug === slug) {
+      await putEntryToGitHub(parsed.data, current.sha);
+    } else {
+      await putEntryToGitHub(parsed.data);
+      await deleteEntryFromGitHub(slug, current.sha);
+    }
     revalidatePath("/");
     revalidatePath(`/entries/${slug}`);
     revalidatePath(`/entries/${parsed.data.slug}`);
@@ -74,6 +79,6 @@ function githubSaveMessage(error: unknown) {
   if (message.includes("environment variables")) return "GitHub設定が不足しています。";
   if (message.includes("GitHub 401") || message.includes("GitHub 403")) return "GitHubへの書き込み権限を確認してください。";
   if (message.includes("GitHub 409")) return "GitHub上のデータが更新されています。再度保存してください。";
-  if (message.includes("GitHub 422")) return "slugを変更した場合は新規作成で保存してください。";
+  if (message.includes("GitHub 422")) return "同じslugの記録があるか、保存内容に問題があります。";
   return "保存に失敗しました。入力内容はブラウザに保持されています。";
 }

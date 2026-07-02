@@ -14,11 +14,11 @@ export default async function AdminEntriesPage() {
         </Link>
       </div>
       <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
-        <div className="hidden grid-cols-[1fr_120px_100px_180px_160px] gap-4 border-b border-stone-200 px-4 py-3 text-sm font-semibold md:grid">
+        <div className="hidden grid-cols-[1fr_120px_100px_180px_220px] gap-4 border-b border-stone-200 px-4 py-3 text-sm font-semibold md:grid">
           <span>タイトル</span><span>訪問日</span><span>状態</span><span>更新日時</span><span>操作</span>
         </div>
         {entries.map((entry) => (
-          <div key={entry.id} className="grid gap-3 border-b border-stone-100 px-4 py-4 md:grid-cols-[1fr_120px_100px_180px_160px] md:items-center">
+          <div key={entry.slug} className="grid gap-3 border-b border-stone-100 px-4 py-4 md:grid-cols-[1fr_120px_100px_180px_220px] md:items-center">
             <div>
               <p className="font-medium">{entry.title}</p>
               <p className="text-sm text-stone-500 md:hidden">{entry.visitedAt} / {entry.status}</p>
@@ -27,6 +27,9 @@ export default async function AdminEntriesPage() {
             <span className="hidden text-sm md:block">{entry.status}</span>
             <span className="hidden text-sm text-stone-500 md:block">{entry.updatedAt}</span>
             <div className="flex gap-2">
+              <Link className="rounded-md border border-stone-300 px-3 py-2 text-sm" href={`/entries/${entry.slug}`}>
+                見る
+              </Link>
               <Link className="rounded-md border border-stone-300 px-3 py-2 text-sm" href={`/admin/entries/${entry.slug}/edit`}>
                 編集
               </Link>

@@ -193,6 +193,13 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
     });
   }
 
+  function setCoverImage(image: ImageItem) {
+    form.setValue("coverSrc", image.src, { shouldDirty: true });
+    form.setValue("coverAlt", image.alt || values.title, { shouldDirty: true });
+    form.setValue("coverWidth", image.width, { shouldDirty: true });
+    form.setValue("coverHeight", image.height, { shouldDirty: true });
+  }
+
   return (
     <form className="mx-auto max-w-[880px] space-y-8 bg-white" onSubmit={(event) => event.preventDefault()}>
       <section className="space-y-5 px-2 pt-6">
@@ -200,14 +207,18 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
           className="w-full border-0 bg-transparent font-serif text-5xl leading-tight outline-none placeholder:text-stone-300 sm:text-6xl"
           placeholder="タイトル"
           {...form.register("title", { required: true })}
+          onBlur={(event) => {
+            if (!values.slug) form.setValue("slug", slugify(event.target.value), { shouldDirty: true });
+          }}
         />
         <textarea
           className="min-h-16 w-full resize-none border-0 bg-transparent text-lg leading-8 text-stone-600 outline-none placeholder:text-stone-300"
-          placeholder="概要"
-          {...form.register("summary", { required: true })}
+          placeholder="概要（任意）"
+          {...form.register("summary")}
         />
         <div className="flex flex-wrap gap-3 text-sm text-stone-500">
           <input type="date" className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("visitedAt")} />
+          <input className="min-w-48 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="slug" {...form.register("slug", { required: true })} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title), { shouldDirty: true })} />
           <input className="min-w-64 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="タグ" {...form.register("tags")} />
           <select className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("status")}>
             <option value="draft">下書き</option>
@@ -215,9 +226,24 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
           </select>
         </div>
         <details className="border-t border-stone-100 pt-3">
+          <summary className="cursor-pointer text-sm text-stone-500">カバー写真</summary>
+          <div className="mt-4">
+            <ImageFields
+              uploadSlug={entryPayload.slug}
+              image={{
+                src: values.coverSrc,
+                alt: values.coverAlt || values.title,
+                caption: "",
+                width: Number(values.coverWidth) || 1600,
+                height: Number(values.coverHeight) || 1000
+              }}
+              onChange={setCoverImage}
+            />
+          </div>
+        </details>
+        <details className="border-t border-stone-100 pt-3">
           <summary className="cursor-pointer text-sm text-stone-500">詳細</summary>
           <div className="mt-4 grid gap-3 text-sm md:grid-cols-2">
-            <input className="rounded-md border border-stone-200 p-3" placeholder="slug" {...form.register("slug")} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title))} />
             <input className="rounded-md border border-stone-200 p-3" placeholder="場所" {...form.register("locationName")} />
             <input className="rounded-md border border-stone-200 p-3 md:col-span-2" placeholder="住所" {...form.register("locationAddress")} />
             <input className="rounded-md border border-stone-200 p-3 md:col-span-2" placeholder="Google Maps URL" {...form.register("locationGoogleMapsUrl")} />

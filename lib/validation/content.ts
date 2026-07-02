@@ -80,7 +80,7 @@ export const entrySchema = z.object({
   id: z.string().min(1),
   slug: slugSchema,
   title: z.string().min(1).max(160),
-  summary: z.string().min(1).max(500),
+  summary: z.string().max(500),
   status: z.union([z.literal("draft"), z.literal("published")]),
   visitedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   createdAt: z.string().datetime({ offset: true }),

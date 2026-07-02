@@ -1,33 +1,34 @@
 import Link from "next/link";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { DeleteEntryButton } from "@/components/admin/delete-entry-button";
 import { getAllEntries } from "@/lib/content/local";
-import { githubStatus } from "@/lib/github/client";
 
 export default async function AdminPage() {
   const entries = await getAllEntries();
-  const status = await githubStatus();
-  const published = entries.filter((entry) => entry.status === "published").length;
-  const draft = entries.length - published;
   return (
     <AdminShell>
-      <div className="mb-8 flex items-center justify-between gap-4">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="font-serif text-4xl">管理</h1>
-        <Link href="/admin/entries/new" className="rounded-md bg-ink px-4 py-2 text-sm text-white">
-          追加
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/" className="rounded-md border border-stone-300 px-4 py-2 text-sm">ホーム</Link>
+          <Link href="/admin/entries/new" className="rounded-md bg-ink px-4 py-2 text-sm text-white">追加</Link>
+        </div>
       </div>
-      <div className="grid gap-4 sm:grid-cols-4">
-        {[["記録件数", entries.length], ["公開済み", published], ["下書き", draft], ["GitHub", status.connected ? "接続済み" : "未接続"]].map(([label, value]) => (
-          <section key={label} className="rounded-lg border border-stone-200 bg-white p-5">
-            <p className="text-sm text-stone-500">{label}</p>
-            <p className="mt-2 text-2xl font-semibold">{value}</p>
-          </section>
+      <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
+        {entries.map((entry) => (
+          <div key={entry.slug} className="grid gap-3 border-b border-stone-100 px-4 py-4 last:border-b-0 md:grid-cols-[1fr_120px_220px] md:items-center">
+            <div>
+              <p className="font-medium">{entry.title}</p>
+              <p className="text-sm text-stone-500">{entry.visitedAt} / {entry.status}</p>
+            </div>
+            <span className="hidden text-sm text-stone-500 md:block">{entry.slug}</span>
+            <div className="flex flex-wrap gap-2">
+              <Link className="rounded-md border border-stone-300 px-3 py-2 text-sm" href={`/entries/${entry.slug}`}>見る</Link>
+              <Link className="rounded-md border border-stone-300 px-3 py-2 text-sm" href={`/admin/entries/${entry.slug}/edit`}>編集</Link>
+              <DeleteEntryButton slug={entry.slug} title={entry.title} />
+            </div>
+          </div>
         ))}
-      </div>
-      <div className="mt-8 rounded-lg border border-stone-200 bg-white p-5">
-        <Link href="/admin/entries" className="text-sm underline">
-          一覧
-        </Link>
       </div>
     </AdminShell>
   );

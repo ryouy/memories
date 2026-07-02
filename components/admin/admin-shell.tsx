@@ -13,6 +13,7 @@ export async function AdminShell({ children }: { children: React.ReactNode }) {
             管理
           </Link>
           <nav className="flex items-center gap-3 text-sm text-stone-500">
+            <Link href="/">ホーム</Link>
             <Link href="/admin/entries">一覧</Link>
             <Link href="/admin/entries/new">追加</Link>
             <LogoutButton />

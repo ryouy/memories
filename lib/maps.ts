@@ -1,4 +1,4 @@
-const allowedHosts = new Set(["google.com", "www.google.com", "maps.google.com"]);
+const allowedHosts = new Set(["google.com", "www.google.com", "maps.google.com", "maps.app.goo.gl"]);
 
 export function isAllowedGoogleMapsUrl(input: string) {
   try {
@@ -14,9 +14,8 @@ export function toGoogleMapsEmbedUrl(input: string) {
   const url = new URL(input);
   if (url.pathname.startsWith("/maps/embed")) return url.toString();
   if (url.pathname.startsWith("/maps")) {
-    const embed = new URL("https://www.google.com/maps");
-    embed.search = url.search;
-    return null;
+    url.searchParams.set("output", "embed");
+    return url.toString();
   }
   return null;
 }

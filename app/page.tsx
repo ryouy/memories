@@ -1,4 +1,5 @@
 import { EntryCard } from "@/components/entries/entry-card";
+import { HomeFilters } from "@/components/entries/home-filters";
 import { SiteShell } from "@/components/layout/site-shell";
 import { collectTags, collectYears, getPublishedEntries, getSiteSettings } from "@/lib/content/local";
 
@@ -22,28 +23,7 @@ export default async function HomePage({
     <SiteShell settings={settings}>
       <main className="mx-auto max-w-[1360px] px-5 pb-16 sm:px-8 lg:px-10">
         <section className="pb-8">
-          <aside className="flex flex-wrap gap-5 border-b border-stone-200 pb-5">
-            <div>
-              <h2 className="mb-2 text-sm font-semibold">年</h2>
-              <div className="flex flex-wrap gap-2">
-                {years.map(([year]) => (
-                  <a key={year} href={`/?year=${year}`} className="rounded-full bg-stone-100 px-3 py-1 text-sm">
-                    {year}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h2 className="mb-2 text-sm font-semibold">タグ</h2>
-              <div className="flex flex-wrap gap-2">
-                {tags.map(([tag]) => (
-                  <a key={tag} href={`/?tag=${encodeURIComponent(tag)}`} className="rounded-full bg-stone-100 px-3 py-1 text-sm">
-                    {tag}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </aside>
+          <HomeFilters tags={tags} years={years} selectedTag={params.tag} selectedYear={params.year} />
         </section>
         <section>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
