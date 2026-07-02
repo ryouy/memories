@@ -425,18 +425,6 @@ function BlockEditor({ block, uploadSlug, onChange, onDelete }: {
       ) : null}
       {block.type === "map" ? (
         <div className="space-y-3 rounded-lg border border-stone-200 p-4 text-sm">
-          <div className="inline-flex rounded-md border border-stone-200 bg-white p-1">
-            {(["card", "embed"] as const).map((mode) => (
-              <button
-                key={mode}
-                type="button"
-                className={`rounded px-3 py-1.5 ${((block.displayMode ?? "card") === mode) ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-100"}`}
-                onClick={() => onChange({ ...block, displayMode: mode })}
-              >
-                {mode === "card" ? "概要" : "地図埋め込み"}
-              </button>
-            ))}
-          </div>
           <input
             className="w-full border-0 bg-transparent p-0 text-base outline-none placeholder:text-stone-300"
             placeholder="Google Maps URL"

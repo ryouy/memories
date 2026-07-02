@@ -1,51 +1,12 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import type { ImageItem } from "@/types/content";
-
-type Preview = {
-  title: string;
-  image: string;
-};
-
-export function MapCard({
-  mapUrl,
-  title,
-  fallbackImage
-}: {
-  mapUrl: string;
-  title: string;
-  fallbackImage?: ImageItem;
-}) {
-  const [preview, setPreview] = useState<Preview | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    fetch(`/api/map-preview?url=${encodeURIComponent(mapUrl)}`)
-      .then((response) => response.ok ? response.json() as Promise<Preview> : null)
-      .then((data) => {
-        if (active && data) setPreview(data);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, [mapUrl]);
-
-  const displayTitle = preview?.title || title;
-  const image = preview?.image || fallbackImage?.src || "";
-  const alt = preview?.title || fallbackImage?.alt || displayTitle;
-
+export function MapCard({ mapUrl, title }: { mapUrl: string; title: string }) {
   return (
-    <a href={mapUrl} target="_blank" rel="noreferrer" className="grid overflow-hidden rounded-lg border border-stone-200 bg-white sm:grid-cols-[220px_1fr]">
-      {image ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={image} alt={alt} className="aspect-[4/3] h-full w-full object-cover" loading="lazy" />
-      ) : null}
-      <span className="flex min-h-28 flex-col justify-center p-5">
-        <span className="block text-sm text-stone-500">Google Maps</span>
-        <span className="mt-2 block text-xl font-semibold">{displayTitle}</span>
-        <span className="mt-2 block text-sm text-stone-500">地図を開く</span>
+    <a href={mapUrl} target="_blank" rel="noreferrer" className="block rounded-lg border border-stone-200 bg-white p-5 shadow-sm transition hover:border-stone-300">
+      <span className="flex items-center justify-between gap-4">
+        <span>
+          <span className="block text-xs uppercase tracking-[0.14em] text-stone-400">Google Maps</span>
+          <span className="mt-2 block text-lg font-semibold">{title}</span>
+        </span>
+        <span className="shrink-0 text-sm text-stone-500">開く</span>
       </span>
     </a>
   );

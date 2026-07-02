@@ -66,22 +66,21 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
           const embed = toGoogleMapsEmbedUrl(block.googleMapsUrl);
           const mapUrl = toGoogleMapsUrl(block.googleMapsUrl);
           const title = block.title || getGoogleMapsTitle(block.googleMapsUrl) || "Google Maps";
-          const displayMode = block.displayMode ?? "card";
           return (
-            <section key={block.id} className={`mx-auto ${displayMode === "embed" ? "max-w-[960px]" : "max-w-[760px]"}`}>
+            <section key={block.id} className={`mx-auto ${embed ? "max-w-[960px]" : "max-w-[760px]"}`}>
               {mapUrl ? (
-                displayMode === "embed" && embed ? (
-                  <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
+                embed ? (
+                  <div className="overflow-hidden rounded-lg border border-stone-200 bg-white shadow-sm">
                     <iframe
                       src={embed}
                       title={title}
-                      className="aspect-video w-full border-0"
+                      className="aspect-[21/9] min-h-56 w-full border-0"
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                     />
                   </div>
                 ) : (
-                  <MapCard mapUrl={mapUrl} title={title} fallbackImage={block.image} />
+                  <MapCard mapUrl={mapUrl} title={title} />
                 )
               ) : null}
             </section>
