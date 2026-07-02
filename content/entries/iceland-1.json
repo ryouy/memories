@@ -7,16 +7,26 @@
   "status": "published",
   "visitedAt": "2025-02-04",
   "createdAt": "2026-07-02T12:40:29.542Z",
-  "updatedAt": "2026-07-02T12:41:39.786Z",
-  "tags": [
-    "アイスランド"
-  ],
+  "updatedAt": "2026-07-02T12:51:59.359Z",
+  "tags": [],
   "location": {},
   "blocks": [
     {
       "id": "block-b427fedd-802c-442e-8440-9ca3877ca414",
       "type": "text",
       "content": "念願だったアイスランドへ行った思い出"
+    },
+    {
+      "id": "block-0c4e06a7-91d9-4fbc-981e-8fd7b932ab3d",
+      "type": "image",
+      "image": {
+        "src": "/uploads/iceland-1/20260702T125158-ccfa66.webp",
+        "alt": "IMG_9837.JPG",
+        "caption": "",
+        "width": 1920,
+        "height": 947
+      },
+      "displayWidth": "large"
     }
   ]
 }
