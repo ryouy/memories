@@ -112,6 +112,8 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
   const [activeStorageKey, setActiveStorageKey] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [newTag, setNewTag] = useState("");
+  const [tagInputOpen, setTagInputOpen] = useState(false);
   const form = useForm<FormValues>({ defaultValues: defaults(entry) });
   const values = form.watch();
 
@@ -189,6 +191,14 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
     form.setValue("tags", selectedTags.filter((item) => item !== tag).join(", "), { shouldDirty: true });
   }
 
+  function createTag() {
+    const tag = newTag.trim();
+    if (!tag) return;
+    addTag(tag);
+    setNewTag("");
+    setTagInputOpen(false);
+  }
+
   async function save(status: EntryStatus) {
     setPending(true);
     setMessage("");
@@ -244,16 +254,26 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
         <div className="flex flex-wrap gap-3 text-sm text-stone-500">
           <input type="date" className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("visitedAt")} />
           <input className="min-w-48 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="URL" {...form.register("slug", { required: true })} onBlur={(event) => form.setValue("slug", slugify(event.target.value || values.title), { shouldDirty: true })} />
-          <input className="min-w-64 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2" placeholder="タグ" list="existing-tags" {...form.register("tags")} />
-          <datalist id="existing-tags">
-            {existingTags.map((tag) => <option key={tag} value={tag} />)}
-          </datalist>
           <select className="rounded-md border border-stone-200 bg-white px-3 py-2" {...form.register("status")}>
             <option value="published">公開</option>
             <option value="draft">下書き</option>
           </select>
         </div>
-        {existingTags.length > 0 ? (
+        <div className="space-y-3">
+          {selectedTags.length > 0 ? (
+            <div className="flex flex-wrap gap-2 text-sm">
+              {selectedTags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  className="rounded-full bg-stone-100 px-3 py-1 text-stone-700 hover:bg-stone-200"
+                  onClick={() => removeTag(tag)}
+                >
+                  {tag} ×
+                </button>
+              ))}
+            </div>
+          ) : null}
           <div className="flex flex-wrap gap-2 text-sm">
             {existingTags.map((tag) => {
               const selected = selectedTags.includes(tag);
@@ -269,22 +289,33 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
                 </button>
               );
             })}
+            <button
+              type="button"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-stone-300 text-lg leading-none text-stone-600 hover:border-stone-500"
+              onClick={() => setTagInputOpen((current) => !current)}
+              aria-label="タグを追加"
+            >
+              +
+            </button>
           </div>
-        ) : null}
-        {selectedTags.length > 0 ? (
-          <div className="flex flex-wrap gap-2 text-sm">
-            {selectedTags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                className="rounded-full bg-stone-100 px-3 py-1 text-stone-700 hover:bg-stone-200"
-                onClick={() => removeTag(tag)}
-              >
-                {tag} ×
-              </button>
-            ))}
-          </div>
-        ) : null}
+          {tagInputOpen ? (
+            <div className="flex max-w-md gap-2 text-sm">
+              <input
+                className="min-w-0 flex-1 rounded-md border border-stone-200 bg-white px-3 py-2"
+                placeholder="新しいタグ"
+                value={newTag}
+                onChange={(event) => setNewTag(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    createTag();
+                  }
+                }}
+              />
+              <button type="button" className="rounded-md bg-ink px-3 py-2 text-white" onClick={createTag}>追加</button>
+            </div>
+          ) : null}
+        </div>
         <details className="border-t border-stone-100 pt-3">
           <summary className="cursor-pointer text-sm text-stone-500">カバー写真</summary>
           <div className="mt-4">
