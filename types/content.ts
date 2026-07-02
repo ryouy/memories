@@ -6,6 +6,7 @@ export type ImageItem = {
   caption?: string;
   width: number;
   height: number;
+  previewSrc?: string;
 };
 
 export type TextBlock = {

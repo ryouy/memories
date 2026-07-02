@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
 function validationMessage(error: ZodError) {
   const issue = error.issues[0];
-  const field = issue?.path.join(".");
+  const field = issue?.path.join(".").replace(/^slug$/, "URL");
   return field ? `${field} を確認してください。` : "入力内容を確認してください。";
 }
 
@@ -48,6 +48,6 @@ function githubSaveMessage(error: unknown) {
   if (message.includes("environment variables")) return "GitHub設定が不足しています。";
   if (message.includes("GitHub 401") || message.includes("GitHub 403")) return "GitHubへの書き込み権限を確認してください。";
   if (message.includes("GitHub 409")) return "GitHub上のデータが更新されています。再度保存してください。";
-  if (message.includes("GitHub 422")) return "同じslugの記録があるか、保存内容に問題があります。";
+  if (message.includes("GitHub 422")) return "同じURLの記事があるか、保存内容に問題があります。";
   return "保存に失敗しました。入力内容はブラウザに保持されています。";
 }

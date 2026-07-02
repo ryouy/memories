@@ -77,6 +77,25 @@ function splitTags(value: string) {
   return value.split(",").map((tag) => tag.trim()).filter(Boolean);
 }
 
+function cleanImage(image: ImageItem): ImageItem {
+  return {
+    src: image.src,
+    alt: image.alt,
+    caption: image.caption,
+    width: image.width,
+    height: image.height
+  };
+}
+
+function cleanBlocks(blocks: ContentBlock[]): ContentBlock[] {
+  return blocks.map((block) => {
+    if (block.type === "image") return { ...block, image: cleanImage(block.image) };
+    if (block.type === "imageGallery") return { ...block, images: block.images.map(cleanImage) };
+    if (block.type === "map" && block.image) return { ...block, image: cleanImage(block.image) };
+    return block;
+  });
+}
+
 export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sha?: string; existingTags?: string[] }) {
   const router = useRouter();
   const [draftIdentity] = useState(() => {
@@ -121,7 +140,7 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
 
   useEffect(() => {
     if (activeStorageKey !== storageKey) return;
-    localStorage.setItem(storageKey, JSON.stringify({ values, blocks }));
+    localStorage.setItem(storageKey, JSON.stringify({ values, blocks: cleanBlocks(blocks) }));
   }, [activeStorageKey, values, blocks, storageKey]);
 
   useEffect(() => {
@@ -155,7 +174,7 @@ export function EntryForm({ entry, sha, existingTags = [] }: { entry?: Entry; sh
       coverImage: values.coverSrc
         ? { src: values.coverSrc, alt: values.coverAlt || values.title, width: Number(values.coverWidth), height: Number(values.coverHeight) }
         : undefined,
-      blocks
+      blocks: cleanBlocks(blocks)
     };
   }, [blocks, draftIdentity.createdAt, draftIdentity.id, draftIdentity.slug, entry?.createdAt, entry?.id, values]);
 
@@ -505,7 +524,7 @@ function GalleryBatchUploader({ uploadSlug, onUploaded }: { uploadSlug: string; 
             const uploaded: ImageItem[] = [];
 
             for (const fileGroup of chunk(files.map((file, index) => ({ file, item: items[index] })), uploadChunkSize)) {
-              const prepared = [];
+              const prepared: Array<{ dataUrl: string; width: number; height: number; alt: string; item: UploadQueueItem }> = [];
               for (const { file, item } of fileGroup) {
                 updateQueue(item.id, { status: "optimizing", message: "最適化中" });
                 try {
@@ -535,7 +554,7 @@ function GalleryBatchUploader({ uploadSlug, onUploaded }: { uploadSlug: string; 
                 const result = await response.json();
                 if (!response.ok) throw new Error(result?.error?.message ?? "アップロードに失敗しました。");
                 const images = result.data.images as ImageItem[];
-                uploaded.push(...images);
+                uploaded.push(...images.map((image, index) => ({ ...image, previewSrc: prepared[index]?.dataUrl })));
                 prepared.forEach((preparedFile) => updateQueue(preparedFile.item.id, { status: "success", message: "成功" }));
               } catch (error) {
                 prepared.forEach((preparedFile) =>
@@ -572,12 +591,14 @@ function GalleryBatchUploader({ uploadSlug, onUploaded }: { uploadSlug: string; 
 function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; uploadSlug: string; onChange: (image: ImageItem) => void }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [previewSrc, setPreviewSrc] = useState("");
 
   async function handleUpload(file: File) {
     setUploading(true);
     setUploadError("");
     try {
       const optimized = await optimizeImage(file);
+      setPreviewSrc(optimized.dataUrl);
       if (optimized.dataUrl.length > 4_200_000) throw new Error("画像サイズが大きすぎます。");
       const response = await fetch("/api/admin/uploads", {
         method: "POST",
@@ -586,7 +607,7 @@ function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; upload
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result?.error?.message ?? "アップロードに失敗しました。");
-      onChange(result.data.images[0]);
+      onChange({ ...result.data.images[0], previewSrc: optimized.dataUrl });
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : "アップロードに失敗しました。");
     } finally {
@@ -618,7 +639,7 @@ function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; upload
         <figure className="space-y-3">
           <div className="overflow-hidden rounded-lg bg-stone-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={image.src} alt={image.alt || ""} className="h-auto w-full" />
+            <img src={previewSrc || image.previewSrc || image.src} alt={image.alt || ""} className="h-auto w-full" />
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             <input className="rounded-md border border-stone-200 p-2 text-sm" placeholder="説明" value={image.alt} onChange={(event) => onChange({ ...image, alt: event.target.value })} />
@@ -630,9 +651,8 @@ function ImageFields({ image, uploadSlug, onChange }: { image: ImageItem; upload
       {uploading ? <p className="text-sm text-stone-500">アップロード中...</p> : null}
       {uploadError ? <p className="text-sm text-red-700">{uploadError}</p> : null}
       <details>
-        <summary className="cursor-pointer text-sm text-stone-500">{image.src ? "写真を変更・詳細" : "詳細"}</summary>
+        <summary className="cursor-pointer text-sm text-stone-500">詳細</summary>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          {image.src ? <div className="sm:col-span-2">{uploadInput}</div> : null}
           <input className="rounded-md border border-stone-300 p-3 sm:col-span-2" placeholder="/uploads/slug/photo.webp" value={image.src} onChange={(event) => onChange({ ...image, src: event.target.value })} />
           <input className="rounded-md border border-stone-300 p-3" placeholder="alt" value={image.alt} onChange={(event) => onChange({ ...image, alt: event.target.value })} />
           <input className="rounded-md border border-stone-300 p-3" placeholder="caption" value={image.caption ?? ""} onChange={(event) => onChange({ ...image, caption: event.target.value })} />

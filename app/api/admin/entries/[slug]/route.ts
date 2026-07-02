@@ -31,7 +31,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ slug
     if (parsed.data.slug === slug) {
       await putEntryToGitHub(parsed.data, current.sha);
     } else {
-      await putEntryToGitHub(parsed.data);
+      const target = await getExistingEntry(parsed.data.slug);
+      if (target && target.entry.id !== current.entry.id) {
+        return fail("URL_CONFLICT", "同じURLの記事があります。別のURLにしてください。", 422);
+      }
+      await putEntryToGitHub(parsed.data, target?.sha);
       await deleteEntryFromGitHub(slug, current.sha);
     }
     revalidatePath("/");
@@ -60,8 +64,16 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ slug: s
 
 function validationMessage(error: ZodError) {
   const issue = error.issues[0];
-  const field = issue?.path.join(".");
+  const field = issue?.path.join(".").replace(/^slug$/, "URL");
   return field ? `${field} を確認してください。` : "入力内容を確認してください。";
+}
+
+async function getExistingEntry(slug: string) {
+  try {
+    return await getEntryFromGitHub(slug);
+  } catch {
+    return null;
+  }
 }
 
 function githubStatus(error: unknown) {
@@ -77,6 +89,6 @@ function githubSaveMessage(error: unknown) {
   if (message.includes("environment variables")) return "GitHub設定が不足しています。";
   if (message.includes("GitHub 401") || message.includes("GitHub 403")) return "GitHubへの書き込み権限を確認してください。";
   if (message.includes("GitHub 409")) return "GitHub上のデータが更新されています。再度保存してください。";
-  if (message.includes("GitHub 422")) return "同じslugの記録があるか、保存内容に問題があります。";
+  if (message.includes("GitHub 422")) return "同じURLの記事があるか、保存内容に問題があります。";
   return "保存に失敗しました。入力内容はブラウザに保持されています。";
 }

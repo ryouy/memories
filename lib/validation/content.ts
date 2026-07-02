@@ -4,7 +4,7 @@ const slugSchema = z
   .string()
   .min(1)
   .max(90)
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slugは英小文字・数字・ハイフンで入力してください。");
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "URLは英小文字・数字・ハイフンで入力してください。");
 
 const imagePathSchema = z
   .string()
