@@ -1,6 +1,6 @@
 import type { ContentBlock, ImageItem } from "@/types/content";
 import { renderMarkdown } from "@/lib/markdown";
-import { getGoogleMapsTitle, isAllowedGoogleMapsUrl, toGoogleMapsEmbedUrl } from "@/lib/maps";
+import { getGoogleMapsTitle, toGoogleMapsEmbedUrl, toGoogleMapsUrl } from "@/lib/maps";
 import { youtubeEmbedUrl } from "@/lib/youtube";
 
 function Caption({ image }: { image: ImageItem }) {
@@ -63,25 +63,33 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
 
         if (block.type === "map") {
           const embed = toGoogleMapsEmbedUrl(block.googleMapsUrl);
+          const mapUrl = toGoogleMapsUrl(block.googleMapsUrl);
           const title = block.title || getGoogleMapsTitle(block.googleMapsUrl) || "Google Maps";
+          const displayMode = block.displayMode ?? "card";
           return (
-            <section key={block.id} className="mx-auto max-w-[760px]">
-              {isAllowedGoogleMapsUrl(block.googleMapsUrl) ? (
-                embed ? (
+            <section key={block.id} className={`mx-auto ${displayMode === "embed" ? "max-w-[960px]" : "max-w-[760px]"}`}>
+              {mapUrl ? (
+                displayMode === "embed" && embed ? (
                   <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
                     <iframe
                       src={embed}
                       title={title}
-                      className="aspect-[4/3] w-full border-0"
+                      className="aspect-video w-full border-0"
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                     />
                   </div>
                 ) : (
-                  <a href={block.googleMapsUrl} target="_blank" rel="noreferrer" className="block rounded-lg border border-stone-200 bg-white p-5">
-                    <span className="block text-sm text-stone-500">Google Maps</span>
-                    <span className="mt-2 block text-xl font-semibold">{title}</span>
-                    <span className="mt-2 block text-sm text-stone-500">地図を開く</span>
+                  <a href={mapUrl} target="_blank" rel="noreferrer" className="grid overflow-hidden rounded-lg border border-stone-200 bg-white sm:grid-cols-[220px_1fr]">
+                    {block.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={block.image.src} alt={block.image.alt} className="aspect-[4/3] h-full w-full object-cover" loading="lazy" />
+                    ) : null}
+                    <span className="flex min-h-28 flex-col justify-center p-5">
+                      <span className="block text-sm text-stone-500">Google Maps</span>
+                      <span className="mt-2 block text-xl font-semibold">{title}</span>
+                      <span className="mt-2 block text-sm text-stone-500">{displayMode === "embed" ? "埋め込み用URLを確認してください" : "地図を開く"}</span>
+                    </span>
                   </a>
                 )
               ) : null}

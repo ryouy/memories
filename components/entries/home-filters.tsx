@@ -53,10 +53,12 @@ export function HomeFilters({
           <button
             key={view}
             type="button"
-            className={`rounded px-3 py-1.5 ${selectedView === view ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-100"}`}
+            aria-label={view === "tile" ? "タイル表示" : "リスト表示"}
+            title={view === "tile" ? "タイル表示" : "リスト表示"}
+            className={`rounded px-3 py-1.5 text-base ${selectedView === view ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-100"}`}
             onClick={() => go({ year: selectedYear, tag: selectedTag, view })}
           >
-            {view === "tile" ? "タイル" : "リスト"}
+            {view === "tile" ? "🧱" : "📋"}
           </button>
         ))}
       </div>

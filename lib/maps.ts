@@ -2,16 +2,22 @@ const allowedHosts = new Set(["google.com", "www.google.com", "maps.google.com",
 
 export function isAllowedGoogleMapsUrl(input: string) {
   try {
-    const url = parseGoogleMapsUrl(input);
-    return url.protocol === "https:" && allowedHosts.has(url.hostname);
+    return Boolean(toGoogleMapsUrl(input));
   } catch {
     return false;
   }
 }
 
-export function toGoogleMapsEmbedUrl(input: string) {
-  if (!isAllowedGoogleMapsUrl(input)) return null;
+export function toGoogleMapsUrl(input: string) {
   const url = parseGoogleMapsUrl(input);
+  if (url.protocol !== "https:" || !allowedHosts.has(url.hostname)) return null;
+  return url.toString();
+}
+
+export function toGoogleMapsEmbedUrl(input: string) {
+  const normalized = toGoogleMapsUrl(input);
+  if (!normalized) return null;
+  const url = new URL(normalized);
   if (url.pathname.startsWith("/maps/embed")) return url.toString();
   return null;
 }
@@ -33,10 +39,15 @@ export function getGoogleMapsTitle(input: string) {
 }
 
 function parseGoogleMapsUrl(input: string) {
-  const trimmed = input.trim();
+  const trimmed = extractIframeSrc(input.trim());
   return new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
 }
 
 function cleanMapsTitle(value: string) {
   return decodeURIComponent(value.replace(/\+/g, " ")).replace(/\s+/g, " ").trim();
+}
+
+function extractIframeSrc(input: string) {
+  const match = input.match(/\bsrc=["']([^"']+)["']/i);
+  return match?.[1] ?? input;
 }

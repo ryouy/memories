@@ -48,8 +48,10 @@ export const imageGalleryBlockSchema = z.object({
 export const mapBlockSchema = z.object({
   id: z.string().min(1),
   type: z.literal("map"),
+  displayMode: z.union([z.literal("card"), z.literal("embed")]).optional().default("card"),
   title: z.string().max(140).optional(),
-  googleMapsUrl: z.string().url()
+  googleMapsUrl: z.string().min(1),
+  image: imageItemSchema.optional()
 });
 
 export const youtubeBlockSchema = z.object({

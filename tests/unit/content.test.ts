@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { entrySchema } from "@/lib/validation/content";
 import { slugify } from "@/lib/utils/slug";
 import { parseYouTubeUrl } from "@/lib/youtube";
-import { getGoogleMapsTitle, isAllowedGoogleMapsUrl } from "@/lib/maps";
+import { getGoogleMapsTitle, isAllowedGoogleMapsUrl, toGoogleMapsEmbedUrl } from "@/lib/maps";
 import { createUploadFilename } from "@/lib/images/filenames";
 
 describe("content utilities", () => {
@@ -24,6 +24,40 @@ describe("content utilities", () => {
     expect(result.success).toBe(true);
   });
 
+  it("validates map card and embed blocks", () => {
+    const base = {
+      schemaVersion: 1,
+      id: "id-1",
+      slug: "sample-entry",
+      title: "Sample",
+      summary: "",
+      status: "published",
+      visitedAt: "2026-01-01",
+      createdAt: "2026-01-01T00:00:00+09:00",
+      updatedAt: "2026-01-01T00:00:00+09:00",
+      tags: [],
+      blocks: [
+        {
+          id: "map-1",
+          type: "map",
+          displayMode: "card",
+          title: "ヨークベニマル一箕町店",
+          googleMapsUrl: "google.com/maps/place/%E3%83%A8%E3%83%BC%E3%82%AF%E3%83%99%E3%83%8B%E3%83%9E%E3%83%AB%E4%B8%80%E7%AE%95%E7%94%BA%E5%BA%97",
+          image: { src: "/uploads/sample-entry/20260101-001.webp", alt: "store", width: 1200, height: 800 }
+        },
+        {
+          id: "map-2",
+          type: "map",
+          displayMode: "embed",
+          title: "Map",
+          googleMapsUrl: "https://www.google.com/maps/embed?pb=test"
+        }
+      ]
+    };
+
+    expect(entrySchema.safeParse(base).success).toBe(true);
+  });
+
   it("generates safe slugs", () => {
     expect(slugify("Tokyo Skytree!!")).toBe("tokyo-skytree");
   });
@@ -41,6 +75,10 @@ describe("content utilities", () => {
 
   it("extracts Google Maps place names", () => {
     expect(getGoogleMapsTitle("google.com/maps/place/%E3%83%A8%E3%83%BC%E3%82%AF%E3%83%99%E3%83%8B%E3%83%9E%E3%83%AB%E4%B8%80%E7%AE%95%E7%94%BA%E5%BA%97/@37.5149342,139.9365413,16z/data=!4m6!3m5!1s0x5f8aacb0bb754807:0x2a1ba756f6de45ba!8m2!3d37.5149341!4d139.9416897!16s%2Fg%2F11xt1f02pw?entry=ttu")).toBe("ヨークベニマル一箕町店");
+  });
+
+  it("accepts pasted Google Maps iframe HTML", () => {
+    expect(toGoogleMapsEmbedUrl('<iframe src="https://www.google.com/maps/embed?pb=test"></iframe>')).toBe("https://www.google.com/maps/embed?pb=test");
   });
 
   it("creates normalized upload filenames", () => {

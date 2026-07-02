@@ -50,7 +50,7 @@ function createBlock(type: ContentBlock["type"]): ContentBlock {
   if (type === "heading") return { id, type, level: 2, text: "" };
   if (type === "image") return { id, type, image: { ...emptyImage }, displayWidth: "large" };
   if (type === "imageGallery") return { id, type, layout: "grid", images: [{ ...emptyImage }] };
-  if (type === "map") return { id, type, title: "", googleMapsUrl: "" };
+  if (type === "map") return { id, type, displayMode: "card", title: "", googleMapsUrl: "" };
   if (type === "youtube") return { id, type, videoId: "", title: "", startSeconds: undefined };
   return { id, type: "divider" };
 }
@@ -407,6 +407,18 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
       ) : null}
       {block.type === "map" ? (
         <div className="space-y-3 rounded-lg border border-stone-200 p-4 text-sm">
+          <div className="inline-flex rounded-md border border-stone-200 bg-white p-1">
+            {(["card", "embed"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                className={`rounded px-3 py-1.5 ${((block.displayMode ?? "card") === mode) ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-100"}`}
+                onClick={() => onChange({ ...block, displayMode: mode })}
+              >
+                {mode === "card" ? "概要" : "地図埋め込み"}
+              </button>
+            ))}
+          </div>
           <input
             className="w-full border-0 bg-transparent p-0 text-base outline-none placeholder:text-stone-300"
             placeholder="地図の表示名"
@@ -422,6 +434,20 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
               onChange({ ...block, googleMapsUrl, title: block.title || getGoogleMapsTitle(googleMapsUrl) });
             }}
           />
+          {(block.displayMode ?? "card") === "card" ? (
+            <details>
+              <summary className="cursor-pointer text-stone-500">写真</summary>
+              <div className="mt-3">
+                <ImageFields
+                  uploadSlug={uploadSlug}
+                  image={block.image ?? { ...emptyImage }}
+                  onChange={(image) => onChange({ ...block, image })}
+                />
+              </div>
+            </details>
+          ) : (
+            <p className="text-xs text-stone-500">Google Mapsの「地図を埋め込む」で取得したURLを貼ってください。</p>
+          )}
         </div>
       ) : null}
       {block.type === "youtube" ? (

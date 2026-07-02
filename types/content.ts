@@ -38,8 +38,10 @@ export type ImageGalleryBlock = {
 export type MapBlock = {
   id: string;
   type: "map";
+  displayMode?: "card" | "embed";
   title?: string;
   googleMapsUrl: string;
+  image?: ImageItem;
 };
 
 export type YouTubeBlock = {
