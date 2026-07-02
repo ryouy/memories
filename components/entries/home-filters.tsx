@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { LayoutGrid, List } from "lucide-react";
 
 export function HomeFilters({
   tags,
@@ -55,10 +56,10 @@ export function HomeFilters({
             type="button"
             aria-label={view === "tile" ? "タイル表示" : "リスト表示"}
             title={view === "tile" ? "タイル表示" : "リスト表示"}
-            className={`rounded px-3 py-1.5 text-base ${selectedView === view ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-100"}`}
+            className={`flex h-8 w-9 items-center justify-center rounded ${selectedView === view ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-100"}`}
             onClick={() => go({ year: selectedYear, tag: selectedTag, view })}
           >
-            {view === "tile" ? "🧱" : "📋"}
+            {view === "tile" ? <LayoutGrid size={16} strokeWidth={1.8} /> : <List size={17} strokeWidth={1.8} />}
           </button>
         ))}
       </div>
