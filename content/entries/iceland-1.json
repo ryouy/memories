@@ -7,7 +7,7 @@
   "status": "published",
   "visitedAt": "2025-02-04",
   "createdAt": "2026-07-02T12:40:29.542Z",
-  "updatedAt": "2026-07-02T12:51:59.359Z",
+  "updatedAt": "2026-07-02T12:52:31.662Z",
   "tags": [],
   "location": {},
   "blocks": [
@@ -27,6 +27,13 @@
         "height": 947
       },
       "displayWidth": "large"
+    },
+    {
+      "id": "block-e54d03b7-d4f6-4a12-862c-60ebbea6c007",
+      "type": "map",
+      "displayMode": "card",
+      "title": "Tsurukamehiroba Park",
+      "googleMapsUrl": "https://www.google.com/maps/place/Tsurukamehiroba+Park/@37.5130713,139.9462954,15z/data=!4m6!3m5!1s0x5f8aacc790a73adb:0xa040abf721fb7545!8m2!3d37.5196036!4d139.9381988!16s%2Fg%2F11cs065k0d?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D"
     }
   ]
 }
