@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "9e1434bd-761c-43a2-a1b7-05d686d4e67d",
+  "slug": "iceland-1",
+  "title": "アイスランド 1",
+  "summary": "",
+  "status": "published",
+  "visitedAt": "2025-02-04",
+  "createdAt": "2026-07-02T12:40:29.542Z",
+  "updatedAt": "2026-07-02T12:41:39.786Z",
+  "tags": [
+    "アイスランド"
+  ],
+  "location": {},
+  "blocks": [
+    {
+      "id": "block-b427fedd-802c-442e-8440-9ca3877ca414",
+      "type": "text",
+      "content": "念願だったアイスランドへ行った思い出"
+    }
+  ]
+}
