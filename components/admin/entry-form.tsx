@@ -43,10 +43,6 @@ const blockOptions: { type: ContentBlock["type"]; label: string }[] = [
   { type: "divider", label: "区切り" }
 ];
 
-function blockLabel(type: ContentBlock["type"]) {
-  return blockOptions.find((option) => option.type === type)?.label ?? type;
-}
-
 function createBlock(type: ContentBlock["type"]): ContentBlock {
   const id = `block-${crypto.randomUUID()}`;
   if (type === "text") return { id, type, content: "" };
@@ -262,33 +258,39 @@ export function EntryForm({ entry, sha }: { entry?: Entry; sha?: string }) {
 }
 
 function BlockInsert({ onAdd }: { onAdd: (type: ContentBlock["type"]) => void }) {
+  const [open, setOpen] = useState(false);
+  const primaryOptions = blockOptions.filter((option) => ["text", "image", "imageGallery", "map"].includes(option.type));
+  const secondaryOptions = blockOptions.filter((option) => !["text", "image", "imageGallery", "map"].includes(option.type));
+
+  function add(type: ContentBlock["type"]) {
+    onAdd(type);
+    setOpen(false);
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-2 py-2 opacity-35 transition group-hover:opacity-100 hover:opacity-100">
-      <span className="flex h-7 w-7 items-center justify-center rounded-full border border-stone-300 text-lg leading-none text-stone-500">+</span>
-      {blockOptions.slice(0, 4).map((option) => (
-        <button
-          key={option.type}
-          type="button"
-          className="rounded-full border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-600 hover:border-stone-400"
-          onClick={() => onAdd(option.type)}
-        >
-          {option.label}
-        </button>
-      ))}
-      <select
-        className="rounded-full border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-600"
-        defaultValue=""
-        onChange={(event) => {
-          if (!event.target.value) return;
-          onAdd(event.target.value as ContentBlock["type"]);
-          event.target.value = "";
-        }}
+    <div className="relative flex h-8 items-center opacity-100 sm:-ml-12 sm:opacity-0 sm:transition sm:hover:opacity-100 sm:focus-within:opacity-100">
+      <button
+        type="button"
+        aria-label="追加"
+        className="flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 bg-white text-lg leading-none text-stone-400 hover:border-stone-400 hover:text-stone-900"
+        onClick={() => setOpen((current) => !current)}
       >
-        <option value="">その他</option>
-        {blockOptions.slice(4).map((option) => (
-          <option key={option.type} value={option.type}>{option.label}</option>
-        ))}
-      </select>
+        +
+      </button>
+      {open ? (
+        <div className="absolute left-9 top-0 z-10 flex max-w-[calc(100vw-5rem)] flex-wrap items-center gap-1 rounded-2xl border border-stone-200 bg-white p-1 shadow-sm sm:min-w-max sm:rounded-full">
+          {[...primaryOptions, ...secondaryOptions].map((option) => (
+            <button
+              key={option.type}
+              type="button"
+              className="rounded-full px-3 py-1.5 text-xs text-stone-600 hover:bg-stone-100 hover:text-stone-900"
+              onClick={() => add(option.type)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -303,15 +305,12 @@ function BlockEditor({ block, index, uploadSlug, onChange, onMove, onDuplicate, 
   onDelete: () => void;
 }) {
   return (
-    <article className="relative py-2">
-      <div className="mb-1 flex gap-2 text-xs text-stone-400 opacity-60 md:absolute md:-left-16 md:top-3 md:mb-0 md:w-14 md:flex-col md:items-end md:gap-1 md:opacity-0 md:transition md:group-hover:opacity-100">
-        <span className="text-[11px] text-stone-400">{blockLabel(block.type)}</span>
-        <div className="flex gap-1">
-          <button type="button" className="text-xs text-stone-400 hover:text-stone-900" onClick={() => onMove(index, -1)}>↑</button>
-          <button type="button" className="text-xs text-stone-400 hover:text-stone-900" onClick={() => onMove(index, 1)}>↓</button>
-          <button type="button" className="text-xs text-stone-400 hover:text-stone-900" onClick={onDuplicate}>複</button>
-          <button type="button" className="text-xs text-red-400 hover:text-red-700" onClick={onDelete}>×</button>
-        </div>
+    <article className="group/block relative py-1">
+      <div className="mb-1 flex gap-2 text-xs text-stone-300 opacity-100 sm:absolute sm:-left-20 sm:top-3 sm:mb-0 sm:w-16 sm:justify-end sm:opacity-0 sm:transition sm:group-hover/block:opacity-100 sm:group-focus-within/block:opacity-100">
+        <button type="button" className="hover:text-stone-900" aria-label="上へ" onClick={() => onMove(index, -1)}>↑</button>
+        <button type="button" className="hover:text-stone-900" aria-label="下へ" onClick={() => onMove(index, 1)}>↓</button>
+        <button type="button" className="hover:text-stone-900" aria-label="複製" onClick={onDuplicate}>複</button>
+        <button type="button" className="hover:text-red-600" aria-label="削除" onClick={onDelete}>×</button>
       </div>
       {block.type === "text" ? (
         <textarea className="min-h-32 w-full resize-y border-0 bg-transparent p-0 text-[17px] leading-9 outline-none placeholder:text-stone-300" placeholder="本文" value={block.content} onChange={(event) => onChange({ ...block, content: event.target.value })} />
