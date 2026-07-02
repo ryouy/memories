@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "8f884ccb-417a-452e-9978-c763db765ec1",
+  "slug": "yy",
+  "title": "y",
+  "summary": "",
+  "status": "published",
+  "visitedAt": "2026-07-02",
+  "createdAt": "2026-07-02T12:42:12.903Z",
+  "updatedAt": "2026-07-02T12:47:24.021Z",
+  "tags": [],
+  "location": {},
+  "blocks": [
+    {
+      "id": "block-004acc36-8ccc-4e91-80b7-6467fcdf797f",
+      "type": "imageGallery",
+      "layout": "grid",
+      "images": [
+        {
+          "src": "/uploads/entry-1782996132903/20260702T124424-be449c.webp",
+          "alt": "IMG_9837.JPG",
+          "caption": "",
+          "width": 1920,
+          "height": 947
+        },
+        {
+          "src": "/uploads/y/20260702T124533-bb5737.webp",
+          "alt": "IMG_9837.JPG",
+          "caption": "",
+          "width": 1920,
+          "height": 947
+        }
+      ]
+    },
+    {
+      "id": "block-8a95358e-da8e-4b2d-84c9-266ba5b37a20",
+      "type": "text",
+      "content": ""
+    },
+    {
+      "id": "block-d29ce519-39fa-4ed4-9b04-b53d8bc49ede",
+      "type": "map",
+      "displayMode": "card",
+      "title": "Tsurukamehiroba Park",
+      "googleMapsUrl": "https://www.google.com/maps/place/Tsurukamehiroba+Park/@37.5130713,139.9462954,15z/data=!4m6!3m5!1s0x5f8aacc790a73adb:0xa040abf721fb7545!8m2!3d37.5196036!4d139.9381988!16s%2Fg%2F11cs065k0d?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D"
+    }
+  ]
+}
