@@ -48,14 +48,18 @@ export function HomeFilters({
           <option key={tag} value={tag}>{tag}</option>
         ))}
       </select>
-      <select
-        className="rounded-md border border-stone-200 bg-white px-3 py-2"
-        value={selectedView}
-        onChange={(event) => go({ year: selectedYear, tag: selectedTag, view: event.target.value as "tile" | "list" })}
-      >
-        <option value="tile">タイル</option>
-        <option value="list">リスト</option>
-      </select>
+      <div className="flex rounded-md border border-stone-200 bg-white p-1">
+        {(["tile", "list"] as const).map((view) => (
+          <button
+            key={view}
+            type="button"
+            className={`rounded px-3 py-1.5 ${selectedView === view ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-100"}`}
+            onClick={() => go({ year: selectedYear, tag: selectedTag, view })}
+          >
+            {view === "tile" ? "タイル" : "リスト"}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
