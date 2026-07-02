@@ -4,6 +4,22 @@ import { getGoogleMapsTitle, toGoogleMapsEmbedUrl, toGoogleMapsUrl } from "@/lib
 import { youtubeEmbedUrl } from "@/lib/youtube";
 import { MapCard } from "@/components/blocks/map-card";
 
+const widthClasses = {
+  small: "mx-auto max-w-[520px]",
+  medium: "mx-auto max-w-[760px]",
+  large: "mx-auto max-w-[960px]",
+  wide: "mx-auto max-w-[1180px]",
+  full: "mx-auto max-w-[1360px]"
+};
+
+const mapAspectClasses = {
+  small: "aspect-[16/9] min-h-48",
+  medium: "aspect-[16/9] min-h-52",
+  large: "aspect-[21/9] min-h-56",
+  wide: "aspect-[21/8] min-h-60",
+  full: "aspect-[24/9] min-h-64"
+};
+
 function Caption({ image }: { image: ImageItem }) {
   return image.caption ? <figcaption className="mt-2 text-sm text-stone-500">{image.caption}</figcaption> : null;
 }
@@ -44,11 +60,7 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
         }
 
         if (block.type === "image") {
-          const width = {
-            medium: "mx-auto max-w-[760px]",
-            large: "mx-auto max-w-5xl",
-            full: "mx-auto max-w-[1360px]"
-          }[block.displayWidth];
+          const width = widthClasses[block.displayWidth] ?? widthClasses.large;
           return <ImageFigure key={block.id} image={block.image} className={width} />;
         }
 
@@ -66,15 +78,16 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
           const embed = toGoogleMapsEmbedUrl(block.googleMapsUrl);
           const mapUrl = toGoogleMapsUrl(block.googleMapsUrl);
           const title = block.title || getGoogleMapsTitle(block.googleMapsUrl) || "Google Maps";
+          const displayWidth = block.displayWidth ?? "large";
           return (
-            <section key={block.id} className={`mx-auto ${embed ? "max-w-[960px]" : "max-w-[760px]"}`}>
+            <section key={block.id} className={embed ? widthClasses[displayWidth] : widthClasses[displayWidth]}>
               {mapUrl ? (
                 embed ? (
                   <div className="overflow-hidden rounded-lg border border-stone-200 bg-white shadow-sm">
                     <iframe
                       src={embed}
                       title={title}
-                      className="aspect-[21/9] min-h-56 w-full border-0"
+                      className={`${mapAspectClasses[displayWidth]} w-full border-0`}
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                     />

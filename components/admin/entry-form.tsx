@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import type { ContentBlock, Entry, EntryStatus, ImageItem } from "@/types/content";
+import type { ContentBlock, DisplayWidth, Entry, EntryStatus, ImageItem } from "@/types/content";
 import { getGoogleMapsTitle } from "@/lib/maps";
 import { parseYouTubeUrl } from "@/lib/youtube";
 import { slugify } from "@/lib/utils/slug";
@@ -44,13 +44,21 @@ const blockOptions: { type: ContentBlock["type"]; label: string }[] = [
   { type: "divider", label: "区切り" }
 ];
 
+const displayWidthOptions: Array<{ value: DisplayWidth; label: string; hint: string }> = [
+  { value: "small", label: "小", hint: "本文より小さめ" },
+  { value: "medium", label: "標準", hint: "本文幅" },
+  { value: "large", label: "大", hint: "少し大きめ" },
+  { value: "wide", label: "横長", hint: "横に広く" },
+  { value: "full", label: "全幅", hint: "最大幅" }
+];
+
 function createBlock(type: ContentBlock["type"]): ContentBlock {
   const id = `block-${crypto.randomUUID()}`;
   if (type === "text") return { id, type, content: "" };
   if (type === "heading") return { id, type, level: 2, text: "" };
   if (type === "image") return { id, type, image: { ...emptyImage }, displayWidth: "large" };
   if (type === "imageGallery") return { id, type, layout: "grid", images: [{ ...emptyImage }] };
-  if (type === "map") return { id, type, displayMode: "card", title: "", googleMapsUrl: "" };
+  if (type === "map") return { id, type, displayMode: "card", displayWidth: "large", title: "", googleMapsUrl: "" };
   if (type === "youtube") return { id, type, videoId: "", title: "", startSeconds: undefined };
   return { id, type: "divider" };
 }
@@ -409,6 +417,25 @@ function BlockInsert({ onAdd }: { onAdd: (type: ContentBlock["type"]) => void })
   );
 }
 
+function DisplayWidthPicker({ value, onChange }: { value?: DisplayWidth; onChange: (value: DisplayWidth) => void }) {
+  const selected = value ?? "large";
+  return (
+    <div className="flex flex-wrap gap-1 rounded-lg border border-stone-200 bg-white p-1 text-xs">
+      {displayWidthOptions.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          title={option.hint}
+          className={`rounded-md px-3 py-1.5 ${selected === option.value ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-100"}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function BlockEditor({ block, uploadSlug, onChange, onDelete }: {
   block: ContentBlock;
   uploadSlug: string;
@@ -429,7 +456,12 @@ function BlockEditor({ block, uploadSlug, onChange, onDelete }: {
           <input className="border-0 bg-transparent font-serif text-3xl outline-none placeholder:text-stone-300" placeholder="見出し" value={block.text} onChange={(event) => onChange({ ...block, text: event.target.value })} />
         </div>
       ) : null}
-      {block.type === "image" ? <ImageFields uploadSlug={uploadSlug} image={block.image} onChange={(image) => onChange({ ...block, image })} /> : null}
+      {block.type === "image" ? (
+        <div className="space-y-3">
+          <DisplayWidthPicker value={block.displayWidth} onChange={(displayWidth) => onChange({ ...block, displayWidth })} />
+          <ImageFields uploadSlug={uploadSlug} image={block.image} onChange={(image) => onChange({ ...block, image })} />
+        </div>
+      ) : null}
       {block.type === "imageGallery" ? (
         <div className="space-y-4">
           {block.images.map((image, imageIndex) => (
@@ -456,6 +488,7 @@ function BlockEditor({ block, uploadSlug, onChange, onDelete }: {
       ) : null}
       {block.type === "map" ? (
         <div className="space-y-3 rounded-lg border border-stone-200 p-4 text-sm">
+          <DisplayWidthPicker value={block.displayWidth} onChange={(displayWidth) => onChange({ ...block, displayWidth })} />
           <input
             className="w-full border-0 bg-transparent p-0 text-base outline-none placeholder:text-stone-300"
             placeholder="Google Maps URL"

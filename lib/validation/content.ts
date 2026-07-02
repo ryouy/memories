@@ -18,6 +18,14 @@ export const imageItemSchema = z.object({
   height: z.number().int().positive()
 });
 
+const displayWidthSchema = z.union([
+  z.literal("small"),
+  z.literal("medium"),
+  z.literal("large"),
+  z.literal("wide"),
+  z.literal("full")
+]);
+
 export const textBlockSchema = z.object({
   id: z.string().min(1),
   type: z.literal("text"),
@@ -35,7 +43,7 @@ export const imageBlockSchema = z.object({
   id: z.string().min(1),
   type: z.literal("image"),
   image: imageItemSchema,
-  displayWidth: z.union([z.literal("medium"), z.literal("large"), z.literal("full")])
+  displayWidth: displayWidthSchema
 });
 
 export const imageGalleryBlockSchema = z.object({
@@ -49,6 +57,7 @@ export const mapBlockSchema = z.object({
   id: z.string().min(1),
   type: z.literal("map"),
   displayMode: z.union([z.literal("card"), z.literal("embed")]).optional().default("card"),
+  displayWidth: displayWidthSchema.optional().default("large"),
   title: z.string().max(140).optional(),
   googleMapsUrl: z.string().min(1),
   image: imageItemSchema.optional()

@@ -18,7 +18,7 @@ export function SiteShell({
   return (
     <div className="min-h-screen bg-white">
       <header className="mx-auto flex max-w-[1360px] items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <Link href="/" className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-700 hover:border-stone-400" aria-label="ホーム">
+        <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink text-white shadow-sm transition hover:bg-stone-700" aria-label="ホーム">
           <House size={18} strokeWidth={1.8} />
         </Link>
         <AdminQuickLogin target={adminTarget} label={adminLabel} />

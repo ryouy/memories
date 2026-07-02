@@ -1,4 +1,5 @@
 export type EntryStatus = "draft" | "published";
+export type DisplayWidth = "small" | "medium" | "large" | "wide" | "full";
 
 export type ImageItem = {
   src: string;
@@ -26,7 +27,7 @@ export type ImageBlock = {
   id: string;
   type: "image";
   image: ImageItem;
-  displayWidth: "medium" | "large" | "full";
+  displayWidth: DisplayWidth;
 };
 
 export type ImageGalleryBlock = {
@@ -40,6 +41,7 @@ export type MapBlock = {
   id: string;
   type: "map";
   displayMode?: "card" | "embed";
+  displayWidth?: DisplayWidth;
   title?: string;
   googleMapsUrl: string;
   image?: ImageItem;
